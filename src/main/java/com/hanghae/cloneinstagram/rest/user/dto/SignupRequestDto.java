@@ -1,4 +1,4 @@
-package com.hanghae.gamemini.dto;
+package com.hanghae.cloneinstagram.rest.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class SignupRequestDto {
 
     @Size(min = 5, max = 10)
-    @Pattern (regexp="^(?=.*?[0-9])(?=.*?[a-z]).{4,10}$")
+    @Pattern (regexp="^(?=.*?[0-9])(?=.*?[a-z]).{5,10}$")
     private String username;
 
 
