@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public enum UserStatusCode implements StatusCode {
+//     UserStatusCode USER_SIGNUP_SUCCESS = new UserStatusCode(true, "회원가입 성공", HttpStatus.OK.value());
 
      NOT_FOUND_AUTHORIZATION_IN_SECURITY_CONTEXT("Security Context에 인증 정보가 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
      USER_SIGNUP_SUCCESS(true, "회원가입 성공", HttpStatus.OK.value()),

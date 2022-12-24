@@ -24,6 +24,10 @@ public class SecurityUtil {
 
      
      public static User getCurrentUser() {
+          //실험용
+          if(SecurityContextHolder.getContext()==null){
+               log.info(">>>>>>>>>>>SecurityContextHolder.getContext() : {}", SecurityContextHolder.getContext());
+          }
           final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
           if (authentication == null) {
                throw new RestApiException(UserStatusCode.NOT_FOUND_AUTHORIZATION_IN_SECURITY_CONTEXT);
