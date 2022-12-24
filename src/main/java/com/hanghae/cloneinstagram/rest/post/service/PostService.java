@@ -5,6 +5,7 @@ import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.post.dto.PostListResponseDto;
 import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.dto.PostResponseDto;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
@@ -12,9 +13,9 @@ import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -63,5 +64,26 @@ public class PostService {
         post.update();
 
         return CommonStatusCode.DELETE_POST;
+    }
+
+    public PostResponseDto.getOriginalPost getOriginalPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
+        );
+
+        return new PostResponseDto.getOriginalPost(post);
+    }
+
+    public PostListResponseDto getPosts() {
+        PostListResponseDto postListResponseDto = new PostListResponseDto();
+
+        //작성일 기준 내림차순
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+
+        for (Post post : postList) {
+            postListResponseDto.addPostList(new PostResponseDto.getPosts(post));
+        }
+
+        return postListResponseDto;
     }
 }

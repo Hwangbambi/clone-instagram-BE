@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostResponseDto {
     private Long id;
-    private String username;
+    private Long userId;
     private String content;
     private String imgUrl;
 
@@ -17,14 +17,36 @@ public class PostResponseDto {
     @NoArgsConstructor
     public static class saveResponse {
         private Long id;
-        private String username;
+        private Long userId;
         private String content;
         private String imgUrl;
         public saveResponse(Post post) {
             this.id = post.getId();
-            this.username = post.getUsername();
+            this.userId = post.getUserId();
             this.content = post.getContent();
             this.imgUrl = post.getImgUrl();
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class getOriginalPost {
+        private Long id;
+        private String content;
+        private String imgUrl;
+        public getOriginalPost(Post post) {
+            this.id = post.getId();
+            this.content = post.getContent();
+            this.imgUrl = post.getImgUrl();
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class getPosts {
+
+        public getPosts(Post post) {
+
         }
     }
 }
