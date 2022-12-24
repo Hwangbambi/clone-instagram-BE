@@ -1,6 +1,9 @@
 package com.hanghae.cloneinstagram.rest.post.service;
 
 import com.hanghae.cloneinstagram.config.S3.AwsS3Service;
+import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
+import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
+import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.dto.PostResponseDto;
@@ -9,6 +12,8 @@ import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,4 +40,28 @@ public class PostService {
 
     }
 
+    public StatusCode deletePost(Long postId) {
+        User user = SecurityUtil.getCurrentUser();
+
+        //조회되는 게시글 없을 때
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
+        );
+
+        //작성자 불일치
+        if (!postRepository.existsByIdAndUserId(postId, user.getId())) {
+            throw new RestApiException(CommonStatusCode.INVALID_USER);
+        }
+
+        //첨부파일 있을 경우 파일 삭제 처리
+        if (post.getImgUrl() != null) {
+            String fileName = post.getImgUrl().split(".com/")[1];
+            awsS3Service.deleteFile(fileName);
+        }
+
+        //게시글 삭제 - soft delete
+        post.update();
+
+        return CommonStatusCode.DELETE_POST;
+    }
 }
