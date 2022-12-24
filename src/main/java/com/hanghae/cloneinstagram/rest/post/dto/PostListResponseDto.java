@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostListResponseDto {
     List<PostResponseDto> postList = new ArrayList<>();
-    public void addPostList(PostResponseDto.getPosts getPosts) {
+    public void addPostList(PostResponseDto postResponseDto) {
+        postList.add(postResponseDto);
     }
 }

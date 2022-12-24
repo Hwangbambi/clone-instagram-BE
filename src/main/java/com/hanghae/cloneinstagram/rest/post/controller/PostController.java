@@ -28,7 +28,6 @@ public class PostController {
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
     @PostMapping("/posts")
     public PrivateResponseBody savePost(@ModelAttribute PostRequestDto postRequestDto) {
-        System.out.println(postRequestDto.getContent());
 
         return new PrivateResponseBody(CommonStatusCode.CREATE_POST,postService.savePost(postRequestDto));
     }

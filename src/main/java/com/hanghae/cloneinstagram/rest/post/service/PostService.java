@@ -5,6 +5,8 @@ import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.comment.model.Comment;
+import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
 import com.hanghae.cloneinstagram.rest.post.dto.PostListResponseDto;
 import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.dto.PostResponseDto;
@@ -81,7 +83,7 @@ public class PostService {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
 
         for (Post post : postList) {
-            postListResponseDto.addPostList(new PostResponseDto.getPosts(post));
+            postListResponseDto.addPostList(new PostResponseDto(post));
         }
 
         return postListResponseDto;

@@ -1,17 +1,40 @@
 package com.hanghae.cloneinstagram.rest.post.dto;
 
+import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
-import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 public class PostResponseDto {
     private Long id;
+    private String profileUrl;
     private Long userId;
     private String content;
     private String imgUrl;
+    private int likes;
+    private int commentsNum;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
+    private List<Comment> commentList = new ArrayList<>();
+
+    public PostResponseDto(Post post) {
+        this.id = post.getId();
+        this.userId = post.getUserId();
+        this.content = post.getContent();
+        this.likes = post.getLikes();
+        this.imgUrl = post.getImgUrl();
+        this.createdAt = post.getCreatedAt();
+        this.modifiedAt = post.getModifiedAt();
+        this.commentList = null; //추후 추가
+    }
+
+
 
     @Getter
     @NoArgsConstructor
@@ -38,15 +61,6 @@ public class PostResponseDto {
             this.id = post.getId();
             this.content = post.getContent();
             this.imgUrl = post.getImgUrl();
-        }
-    }
-
-    @Getter
-    @NoArgsConstructor
-    public static class getPosts {
-
-        public getPosts(Post post) {
-
         }
     }
 }
