@@ -22,13 +22,17 @@ public class User {
      @Column(nullable = false)
      private String password;
      
-     @Column(nullable = false, unique = true)
-     private String email;
+     @Column(nullable = false)
+     private String email; // 카카오 메일주소와 중복가능(다른유저로봄). unique False
      
      @Column
      private String profileUrl;
      
      @Column
      private Boolean deleted = false;
+     
+     @Column(nullable = true, unique = true)
+     private String kakaoId;
+     
      
 }

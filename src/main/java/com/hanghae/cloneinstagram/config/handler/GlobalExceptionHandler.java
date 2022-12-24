@@ -25,7 +25,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      // RestApiException 에러 핸들링
      @ExceptionHandler (RestApiException.class)
      public ResponseEntity<Object> handleCustomException(RestApiException e) {
-          
           StatusCode statusCode = e.getStatusCode();
           return handleExceptionInternal(statusCode);
      }
