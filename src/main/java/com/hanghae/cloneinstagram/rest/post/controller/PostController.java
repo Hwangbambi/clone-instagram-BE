@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -20,15 +17,45 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class PostController {
-
     private final PostService postService;
+
+    @ApiOperation(value = "게시글 전체 조회")
+    @GetMapping("/posts")
+    public PrivateResponseBody getPosts() {
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
+    }
 
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
     @PostMapping("/posts")
-    public ResponseEntity<PrivateResponseBody> savePost(@ModelAttribute PostRequestDto postRequestDto) throws IOException {
+    public PrivateResponseBody savePost(@ModelAttribute PostRequestDto postRequestDto) {
 
-        return ResponseEntity.ok(new PrivateResponseBody(CommonStatusCode.CREATE_POST,postService.savePost(postRequestDto)));
+        return new PrivateResponseBody(CommonStatusCode.CREATE_POST,postService.savePost(postRequestDto));
     }
+
+    @ApiOperation(value = "게시글 삭제")
+    @DeleteMapping ("/posts/{postId}")
+    public PrivateResponseBody deletePost(@PathVariable Long postId) {
+
+        return new PrivateResponseBody(postService.deletePost(postId));
+    }
+
+    @ApiOperation(value = "게시글 원본 조회-게시글 수정시 사용")
+    @GetMapping("/posts/{postId}/update")
+    public PrivateResponseBody getOriginalPost(@PathVariable Long postId) {
+        return new PrivateResponseBody(CommonStatusCode.OK,postService.getOriginalPost(postId));
+    }
+
+    /*@ApiOperation(value = "게시글 수정")
+    @PatchMapping("/posts/{postId}")
+
+    @ApiOperation(value = "게시글 상세 조회")
+    @GetMapping("/posts/{postId}")*/
+
+
+
+
+
+
 
 
 }

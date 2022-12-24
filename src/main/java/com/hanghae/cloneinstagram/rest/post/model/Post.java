@@ -17,7 +17,7 @@ public class Post extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private Long userId;
 
     @Column
     private String content;
@@ -32,11 +32,15 @@ public class Post extends Timestamped {
     private boolean deleted;
 
     public Post(PostRequestDto postRequestDto, String imageUrl, User user) {
-        this.username = user.getUsername();
+        this.userId = user.getId();
         this.content = postRequestDto.getContent();
         this.imgUrl = imageUrl;
         this.likes = 0;
         this.deleted = false;
 
+    }
+
+    public void update() {
+        this.deleted = true;
     }
 }
