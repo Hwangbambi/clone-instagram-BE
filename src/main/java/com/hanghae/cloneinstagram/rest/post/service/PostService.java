@@ -63,6 +63,7 @@ public class PostService {
         }
 
         //게시글 삭제 - soft delete
+        // 근데 true 로 안바뀜.. 12/26 수정해야 함, mapping type 도 확인 할 것
         post.update();
 
         return CommonStatusCode.DELETE_POST;
@@ -79,9 +80,10 @@ public class PostService {
     public PostListResponseDto getPosts() {
         PostListResponseDto postListResponseDto = new PostListResponseDto();
 
-        //작성일 기준 내림차순
-        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+        //작성일 기준 내림차순, deleted is false
+        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
 
+        // 12/26 댓글 리스트도 추가하기
         for (Post post : postList) {
             postListResponseDto.addPostList(new PostResponseDto(post));
         }

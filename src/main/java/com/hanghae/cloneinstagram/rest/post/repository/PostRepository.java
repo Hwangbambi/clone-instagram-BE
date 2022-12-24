@@ -9,5 +9,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     boolean existsByIdAndUserId(Long postId, Long userId);
-    List<Post> findAllByOrderByCreatedAtDesc();
+    List<Post> findByDeletedIsFalseOrderByCreatedAtDesc();
 }
