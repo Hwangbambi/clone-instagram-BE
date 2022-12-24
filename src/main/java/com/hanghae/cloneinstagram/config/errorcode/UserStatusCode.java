@@ -25,9 +25,8 @@ public enum UserStatusCode implements StatusCode {
 
      WRONG_ADMIN_TOKEN("관리자 암호가 틀려 등록이 불가능합니다.", HttpStatus.BAD_REQUEST.value()),
      OVERLAPPED_USERNAME("중복된 username 입니다.", HttpStatus.BAD_REQUEST.value()),
-     OVERLAPPED_NICKNAME("중복된 닉네임 입니다.", HttpStatus.BAD_REQUEST.value()),
+     OVERLAPPED_EMAIL("이미 존재하는 이메일 입니다.", HttpStatus.BAD_REQUEST.value()),
      PASSWORD_CHECK("입력된 비밀번호가 다릅니다.", HttpStatus.BAD_REQUEST.value()),
-     임시이넘객체("임시객체입니다", HttpStatus.BAD_REQUEST.value()),
      INVALID_TOKEN("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST.value());
 
      private boolean success = false;

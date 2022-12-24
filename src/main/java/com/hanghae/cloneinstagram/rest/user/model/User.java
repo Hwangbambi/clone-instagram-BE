@@ -1,5 +1,6 @@
 package com.hanghae.cloneinstagram.rest.user.model;
 
+import com.hanghae.cloneinstagram.rest.user.dto.SignupRequestDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -34,5 +35,10 @@ public class User {
      @Column(nullable = true, unique = true)
      private String kakaoId;
      
+     public User(SignupRequestDto requestDto, String password){
+          this.username = requestDto.getUsername();
+          this.email = requestDto.getEmail();
+          this.password = password;
+     }
      
 }
