@@ -15,7 +15,7 @@ public class PrivateResponseBody<T> {
      
      @ApiModelProperty(value="실제 데이터")
      @JsonInclude (JsonInclude.Include.NON_EMPTY)
-     private Object data; // null 일경우 json에 안보내지도록
+     private T data; // null 일경우 json에 안보내지도록
      
      public PrivateResponseBody(StatusCode statusCode) {
           this.success = statusCode.isSuccess();
@@ -23,7 +23,7 @@ public class PrivateResponseBody<T> {
           this.statusMsg = statusCode.getStatusMsg();
      }
      
-     public PrivateResponseBody(StatusCode statusCode, Object data){
+     public PrivateResponseBody(StatusCode statusCode, T data){
           this.success = statusCode.isSuccess();
           this.statusCode = statusCode.getStatusCode();
           this.statusMsg = statusCode.getStatusMsg();

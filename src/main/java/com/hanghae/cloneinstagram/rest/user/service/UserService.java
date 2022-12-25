@@ -39,7 +39,7 @@ public class UserService {
           userRepository.save(new User(requestDto, password));
      }
      
-     public Object login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+     public LoginResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
           // 사용자 확인
           User user = userRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
                () -> new RestApiException(UserStatusCode.NO_USER)
