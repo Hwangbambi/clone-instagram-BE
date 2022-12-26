@@ -55,7 +55,7 @@ public class UserController {
           return new PrivateResponseBody(UserStatusCode.USER_LOGIN_SUCCESS, userService.login(loginRequestDto, response));
      }
      
-     //https://kauth.kakao.com/oauth/authorize?client_id=ced49bfdb65f5f152e2e43f12e88bd86&redirect_uri=http://13.125.118.137/api/user/kakao/callback&response_type=code
+     //https://kauth.kakao.com/oauth/authorize?client_id=ced49bfdb65f5f152e2e43f12e88bd86&redirect_uri=https://sparta-hippo.shop/api/user/kakao/callback&response_type=code
      //https://kauth.kakao.com/oauth/authorize?client_id=ced49bfdb65f5f152e2e43f12e88bd86&redirect_uri=http://localhost:8080/api/user/kakao/callback&response_type=code
      @Operation(summary = "카카오 로그인 콜백", description = "email, password 로 로그인")
      @GetMapping ("/kakao/callback")
