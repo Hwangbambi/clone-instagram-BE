@@ -28,14 +28,12 @@ public class PostController {
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
     @PostMapping("/posts")
     public PrivateResponseBody savePost(@ModelAttribute PostRequestDto postRequestDto) {
-
         return new PrivateResponseBody(CommonStatusCode.CREATE_POST,postService.savePost(postRequestDto));
     }
 
     @ApiOperation(value = "게시글 삭제")
     @PatchMapping ("/posts/{postId}")
     public PrivateResponseBody deletePost(@PathVariable Long postId) {
-
         return new PrivateResponseBody(postService.deletePost(postId));
     }
 
