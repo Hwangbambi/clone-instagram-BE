@@ -6,16 +6,17 @@ import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.model.Comment;
-import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
-import com.hanghae.cloneinstagram.rest.post.dto.PostListResponseDto;
-import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
-import com.hanghae.cloneinstagram.rest.post.dto.PostResponseDto;
+import com.hanghae.cloneinstagram.rest.comment.service.CommentService;
+import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
+import com.hanghae.cloneinstagram.rest.post.dto.*;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
+import com.hanghae.cloneinstagram.rest.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,10 +24,33 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PostService {
-
     private final PostRepository postRepository;
+    private final HashtagService hashtagService;
+    private final CommentService commentService;
+    private final UserService userService;
     private final AwsS3Service awsS3Service;
 
+    @Transactional(readOnly = true)
+    public PostListResponseDto getPosts() {
+        PostListResponseDto postListResponseDto = new PostListResponseDto();
+
+        //작성일 기준 내림차순, deleted is false
+        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
+
+        for (Post post : postList) {
+            //해당 글번호에 대한 댓글 목록 조회
+            List<Comment> commentList = commentService.getCommentList(post.getId());
+
+            //작성자 profileUrl 조회
+            String profileUrl = userService.getProfileUrl(post.getUserId());
+
+            postListResponseDto.addPostList(new PostResponseDto(post, commentList, profileUrl));
+        }
+
+        return postListResponseDto;
+    }
+
+    @Transactional
     public PostResponseDto.saveResponse savePost(PostRequestDto postRequestDto) {
         User user = SecurityUtil.getCurrentUser();
 
@@ -39,10 +63,18 @@ public class PostService {
 
         Post post = postRepository.saveAndFlush(new Post(postRequestDto, imgUrl, user));
 
+        boolean isHashtag = postRequestDto.getContent().contains("#");
+
+        if (isHashtag) {
+            //해시태그 저장
+            hashtagService.saveHashtag(post.getId(), postRequestDto.getContent());
+        }
+
         return new PostResponseDto.saveResponse(post);
 
     }
 
+    @Transactional
     public StatusCode deletePost(Long postId) {
         User user = SecurityUtil.getCurrentUser();
 
@@ -63,12 +95,15 @@ public class PostService {
         }
 
         //게시글 삭제 - soft delete
-        // 근데 true 로 안바뀜.. 12/26 수정해야 함, mapping type 도 확인 할 것
         post.update();
+
+        //해시태그 삭제
+        hashtagService.deleteHashtag(postId);
 
         return CommonStatusCode.DELETE_POST;
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto.getOriginalPost getOriginalPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
@@ -77,17 +112,5 @@ public class PostService {
         return new PostResponseDto.getOriginalPost(post);
     }
 
-    public PostListResponseDto getPosts() {
-        PostListResponseDto postListResponseDto = new PostListResponseDto();
 
-        //작성일 기준 내림차순, deleted is false
-        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
-
-        // 12/26 댓글 리스트도 추가하기
-        for (Post post : postList) {
-            postListResponseDto.addPostList(new PostResponseDto(post));
-        }
-
-        return postListResponseDto;
-    }
 }

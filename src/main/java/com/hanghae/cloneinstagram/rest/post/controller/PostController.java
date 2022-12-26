@@ -39,7 +39,7 @@ public class PostController {
     }
 
     @ApiOperation(value = "게시글 삭제")
-    @PatchMapping ("/posts/{postId}")
+    @DeleteMapping ("/posts/{postId}")
     public PrivateResponseBody deletePost(@PathVariable Long postId) {
         return new PrivateResponseBody(postService.deletePost(postId));
     }
