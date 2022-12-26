@@ -2,7 +2,6 @@ package com.hanghae.cloneinstagram.rest.post.controller;
 
 import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
-import com.hanghae.cloneinstagram.config.security.UserDetailsImpl;
 import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.service.PostService;
 import io.swagger.annotations.ApiOperation;
@@ -10,11 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +25,13 @@ public class PostController {
          @PageableDefault(size=10, sort = "idx", direction = Sort.Direction.DESC) Pageable pageable)
     {
         return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
+    }
+
+    @ApiOperation(value = "게시글 상세 조회")
+    @GetMapping("/posts/{postId}")
+    public PrivateResponseBody getPost(@PathVariable Long postId) {
+
+        return new PrivateResponseBody(CommonStatusCode.OK,postService.getPost(postId));
     }
 
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
@@ -51,10 +53,9 @@ public class PostController {
     }
 
     /*@ApiOperation(value = "게시글 수정")
-    @PatchMapping("/posts/{postId}")
+    @PatchMapping("/posts/{postId}")*/
 
-    @ApiOperation(value = "게시글 상세 조회")
-    @GetMapping("/posts/{postId}")*/
+
 
 
 
