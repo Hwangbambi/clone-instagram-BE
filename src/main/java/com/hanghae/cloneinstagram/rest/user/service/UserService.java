@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +56,14 @@ public class UserService {
           // return
           return new LoginResponseDto(user.getUsername(), user.getProfileUrl());
      }
+
+    public String getProfileUrl(Long userId) {
+          Optional<User> user = userRepository.findById(userId);
+          String profileUrl = user.get().getProfileUrl();
+
+          return profileUrl;
+    }
+
 //     User user = SecurityUtil.getCurrentUser();// 비회원일경우 null
 
 //     Post post = postRepository.findByIdAndDeletedIsFalse(id).orElseThrow(

@@ -5,11 +5,14 @@ import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.comment.model.Comment;
+import com.hanghae.cloneinstagram.rest.comment.service.CommentService;
 import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
 import com.hanghae.cloneinstagram.rest.post.dto.*;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
+import com.hanghae.cloneinstagram.rest.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final HashtagService hashtagService;
+    private final CommentService commentService;
+    private final UserService userService;
     private final AwsS3Service awsS3Service;
 
     @Transactional(readOnly = true)
@@ -32,9 +37,14 @@ public class PostService {
         //작성일 기준 내림차순, deleted is false
         List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
 
-        // 12/26 댓글 리스트도 추가하기
         for (Post post : postList) {
-            postListResponseDto.addPostList(new PostResponseDto(post));
+            //해당 글번호에 대한 댓글 목록 조회
+            List<Comment> commentList = commentService.getCommentList(post.getId());
+
+            //작성자 profileUrl 조회
+            String profileUrl = userService.getProfileUrl(post.getUserId());
+
+            postListResponseDto.addPostList(new PostResponseDto(post, commentList, profileUrl));
         }
 
         return postListResponseDto;
