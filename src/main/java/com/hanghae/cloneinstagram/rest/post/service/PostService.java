@@ -54,13 +54,15 @@ public class PostService {
     }
     
     @Transactional(readOnly = true)
-    public PostListResponseDto.totalResponseDto getPosts2(Pageable pageable, String search, int postIdx) {
+    public PostListResponseDto.totalResponseDto getPosts2(String search, int postIdx) {
         PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
         
+        // search 가 username or hashtag
+        // username일때
+        Slice<Post> postList = postRepository.findAllByUsernameAndDeletedIsFalseOrderByIdDesc(PageRequest.of(0, postIdx), search);
+        
         //작성일 기준 내림차순, deleted is false
-//        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
-//        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc(pageable.getPageSize(), postIdx);
-        Slice<Post> postList = postRepository.findAllByDeletedIsFalseOrderByIdDesc(PageRequest.of(0, postIdx));
+//        Slice<Post> postList = postRepository.findAllByDeletedIsFalseOrderByIdDesc(PageRequest.of(0, postIdx));
         postListResponseDto.setCurrentSize(postList.getNumberOfElements());
         log.info("postList.getNumberOfElements() : {}" ,postList.getNumberOfElements());
         for (Post post : postList) {

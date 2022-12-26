@@ -19,12 +19,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      
      @Query (
           nativeQuery = true,
-          value = "select * from post p " +
-               "where (p.id >= (select Max(p.id) from post) - :postIdx) and p.deleted is false " +
-               "order by p.id desc " +
-               "limit :size")
-     List<Post> findByDeletedIsFalseOrderByCreatedAtDesc(@Param("size") int size, @Param ("postIdx") Long postIdx);
+          value = "select p.* from post p join users u on p.user_id = u.id " +
+                    "where p.deleted is false and u.username like %:search% " +
+                    "order by p.id desc " ,
+          countQuery = "select p.* from post p join users u on p.user_id = u.id " +
+                         "where p.deleted is false and u.username like %:search% " +
+                         "order by p.id desc ")
+     Slice<Post> findAllByUsernameAndDeletedIsFalseOrderByIdDesc(PageRequest page, String search);
+     
      List<Post> findByDeletedIsFalseOrderByCreatedAtDesc();
+     
      Slice<Post> findAllByDeletedIsFalseOrderByIdDesc(PageRequest page);
+     
      Optional<Post> findByIdAndDeletedIsFalse(Long postId);
 }

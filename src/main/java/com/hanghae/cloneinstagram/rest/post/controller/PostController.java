@@ -6,9 +6,6 @@ import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,11 +18,10 @@ public class PostController {
     @GetMapping("/posts")
     public PrivateResponseBody getPosts(
          @RequestParam(value="size", defaultValue = "5") int size,
-         @RequestParam(value="search", required = false) String search,
-         @PageableDefault(size=5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable)
+         @RequestParam(value="search", required = false) String search)
     {
 //        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
-        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts2(pageable, search, size));
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts2(search, size));
     }
 
     @ApiOperation(value = "게시글 상세 조회")
