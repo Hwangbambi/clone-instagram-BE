@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name="hashtag", indexes = @Index(name = "idx__hashtag", columnList = "hashtag"))
 public class Hashtag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
