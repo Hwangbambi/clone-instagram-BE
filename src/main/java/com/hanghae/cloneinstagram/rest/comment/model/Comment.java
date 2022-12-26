@@ -1,14 +1,15 @@
 package com.hanghae.cloneinstagram.rest.comment.model;
 
 import com.hanghae.cloneinstagram.config.model.Timestamped;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Comment extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
