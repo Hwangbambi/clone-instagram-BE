@@ -109,6 +109,11 @@ public class PostService {
                 () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
         );
 
+        //삭제된 게시글이라면
+        if (post.isDeleted()) {
+            throw new RestApiException(CommonStatusCode.NO_ARTICLE);
+        }
+
         //작성자 불일치
         if (!postRepository.existsByIdAndUserId(postId, user.getId())) {
             throw new RestApiException(CommonStatusCode.INVALID_USER);
@@ -139,4 +144,22 @@ public class PostService {
     }
 
 
+    @Transactional(readOnly = true)
+    public PostResponseDto getPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
+        );
+
+        //삭제된 게시글이라면
+        if (post.isDeleted()) {
+            throw new RestApiException(CommonStatusCode.NO_ARTICLE);
+        }
+
+        List<Comment> commentList = commentService.getCommentList(postId);
+
+        //작성자 profileUrl 조회
+        String profileUrl = userService.getProfileUrl(post.getUserId());
+
+        return new PostResponseDto(post, commentList, profileUrl);
+    }
 }

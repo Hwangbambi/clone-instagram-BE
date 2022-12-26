@@ -22,6 +22,7 @@ public class PostResponseDto {
     private int likes;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private int commentsNum;
     private List<Comment> commentList = new ArrayList<>();
 
     public PostResponseDto(Post post, List<Comment> commentList, String profileUrl) {
@@ -33,6 +34,7 @@ public class PostResponseDto {
         this.imgUrl = post.getImgUrl();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
+        this.commentsNum = commentList.size();
         this.commentList = commentList;
     }
 
@@ -63,4 +65,5 @@ public class PostResponseDto {
             this.imgUrl = post.getImgUrl();
         }
     }
+
 }
