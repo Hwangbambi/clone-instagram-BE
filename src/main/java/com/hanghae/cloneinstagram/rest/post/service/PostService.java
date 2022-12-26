@@ -5,6 +5,7 @@ import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
 import com.hanghae.cloneinstagram.rest.post.dto.*;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
@@ -14,17 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class PostService {
-
     private final PostRepository postRepository;
+    private final HashtagService hashtagService;
     private final AwsS3Service awsS3Service;
 
     @Transactional(readOnly = true)
@@ -46,27 +44,6 @@ public class PostService {
     public PostResponseDto.saveResponse savePost(PostRequestDto postRequestDto) {
         User user = SecurityUtil.getCurrentUser();
 
-        //int HashtagLength = postRequestDto.getContent().split("#")[1].split(" ")[0].length();
-
-
-        /*if (HashtagLength > 0) {
-            //해시태그 저장
-            saveHashtag(HashtagLength, postRequestDto.getContent());
-
-        }*/
-        Pattern pattern = Pattern.compile("[^#](.*?)[\\s$]");
-
-        Matcher matcher = pattern.matcher(postRequestDto.getContent());
-
-        while (matcher.find()) {
-            System.out.println(matcher.group(1));
-
-            if (matcher.group(1) == null) break;
-        }
-
-        System.out.println("postRequestDto.getContent : " + postRequestDto.getContent());
-        System.out.println("postRequestDto.getFile().getOriginalFilename() : " + postRequestDto.getFile().getOriginalFilename());
-
         String imgUrl = null;
 
         //첨부파일 존재할 때
@@ -76,26 +53,16 @@ public class PostService {
 
         Post post = postRepository.saveAndFlush(new Post(postRequestDto, imgUrl, user));
 
+        boolean isHashtag = postRequestDto.getContent().contains("#");
+
+        if (isHashtag) {
+            //해시태그 저장
+            hashtagService.saveHashtag(post.getId(), postRequestDto.getContent());
+        }
+
         return new PostResponseDto.saveResponse(post);
 
     }
-
-    /*private void saveHashtag(int hashtagLength, String content) {
-        HashtagListRequestDto hashtagListRequestDto = new HashtagListRequestDto();
-        //String[] hashtag = content.split("#");
-
-        Pattern pattern = Pattern.compile("[^#](.*?)[\\s$]");
-
-        Matcher matcher = pattern.matcher(content);
-
-        while (matcher.find()) {
-            System.out.println(matcher.group(1));
-
-            if (matcher.group(1) == null) break;
-        }
-
-        //System.out.println(Arrays.toString(hashtag));
-    }*/
 
     @Transactional
     public StatusCode deletePost(Long postId) {

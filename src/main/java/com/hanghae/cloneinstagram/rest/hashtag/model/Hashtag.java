@@ -1,4 +1,4 @@
-package com.hanghae.cloneinstagram.rest.post.model;
+package com.hanghae.cloneinstagram.rest.hashtag.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +19,8 @@ public class Hashtag {
     @Column
     private String hashtag;
 
-
+    public Hashtag(Long id, String hashtag) {
+        this.postId = id;
+        this.hashtag = hashtag;
+    }
 }

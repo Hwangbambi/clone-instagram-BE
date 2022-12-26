@@ -1,11 +1,8 @@
-package com.hanghae.cloneinstagram.rest.post.dto;
+package com.hanghae.cloneinstagram.rest.hashtag.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -14,4 +11,8 @@ public class HashtagRequestDto {
     private Long postId;
     private String hashtag;
 
+    public HashtagRequestDto(Long id, String hashtag) {
+        this.postId = id;
+        this.hashtag = hashtag;
+    }
 }

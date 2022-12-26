@@ -1,4 +1,4 @@
-package com.hanghae.cloneinstagram.rest.post.dto;
+package com.hanghae.cloneinstagram.rest.hashtag.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
