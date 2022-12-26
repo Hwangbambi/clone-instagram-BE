@@ -1,8 +1,8 @@
 package com.hanghae.cloneinstagram.config.model;
 
-import org.springframework.boot.actuate.endpoint.web.WebEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
+//import org.springframework.boot.actuate.endpoint.web.WebEndpointsSupplier;
+//import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
+//import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -18,14 +18,14 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.web.server.ManagementPortType;
-import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
-import org.springframework.boot.actuate.endpoint.web.*;
-import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
+//import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
+//import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+//import org.springframework.boot.actuate.autoconfigure.web.server.ManagementPortType;
+//import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
+//import org.springframework.boot.actuate.endpoint.web.*;
+//import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
+//import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
+//import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
