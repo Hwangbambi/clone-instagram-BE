@@ -32,4 +32,8 @@ public enum UserStatusCode implements StatusCode {
      private boolean success = false;
      private final String statusMsg;
      private final int statusCode;
+     
+     public String statusMsg(){
+          return statusMsg;
+     }
 }

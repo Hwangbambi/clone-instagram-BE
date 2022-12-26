@@ -12,6 +12,7 @@ import com.hanghae.cloneinstagram.rest.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +25,7 @@ public class UserService {
      
      private final PasswordEncoder passwordEncoder;
      
+     @Transactional
      public void signUp(SignupRequestDto requestDto) {
           //username 중복확인
           if(userRepository.existsByUsername(requestDto.getUsername())){
@@ -39,7 +41,8 @@ public class UserService {
           userRepository.save(new User(requestDto, password));
      }
      
-     public Object login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+     @Transactional
+     public LoginResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
           // 사용자 확인
           User user = userRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
                () -> new RestApiException(UserStatusCode.NO_USER)
