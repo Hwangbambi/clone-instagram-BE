@@ -7,6 +7,9 @@ import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,21 +24,23 @@ public class PostController {
 
     @ApiOperation(value = "게시글 전체 조회")
     @GetMapping("/posts")
-    public PrivateResponseBody getPosts() {
+    public PrivateResponseBody getPosts(
+         @RequestParam(value="idx", defaultValue = "0") long idx,
+         @RequestParam(value="search", required = false) String search,
+         @PageableDefault(size=10, sort = "idx", direction = Sort.Direction.DESC) Pageable pageable)
+    {
         return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
     }
 
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
     @PostMapping("/posts")
     public PrivateResponseBody savePost(@ModelAttribute PostRequestDto postRequestDto) {
-
         return new PrivateResponseBody(CommonStatusCode.CREATE_POST,postService.savePost(postRequestDto));
     }
 
     @ApiOperation(value = "게시글 삭제")
     @DeleteMapping ("/posts/{postId}")
     public PrivateResponseBody deletePost(@PathVariable Long postId) {
-
         return new PrivateResponseBody(postService.deletePost(postId));
     }
 
