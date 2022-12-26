@@ -25,11 +25,12 @@ public class PostController {
     @ApiOperation(value = "게시글 전체 조회")
     @GetMapping("/posts")
     public PrivateResponseBody getPosts(
-         @RequestParam(value="idx", defaultValue = "0") long idx,
+         @RequestParam(value="size", defaultValue = "5") int size,
          @RequestParam(value="search", required = false) String search,
-         @PageableDefault(size=10, sort = "idx", direction = Sort.Direction.DESC) Pageable pageable)
+         @PageableDefault(size=5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable)
     {
-        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
+//        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts2(pageable, search, size));
     }
 
     @ApiOperation(value = "게시글 작성 및 파일 업로드")

@@ -15,6 +15,9 @@ import com.hanghae.cloneinstagram.rest.user.model.User;
 import com.hanghae.cloneinstagram.rest.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +50,29 @@ public class PostService {
             postListResponseDto.addPostList(new PostResponseDto(post, commentList, profileUrl));
         }
 
+        return postListResponseDto;
+    }
+    
+    @Transactional(readOnly = true)
+    public PostListResponseDto.totalResponseDto getPosts2(Pageable pageable, String search, int postIdx) {
+        PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
+        
+        //작성일 기준 내림차순, deleted is false
+//        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
+//        List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc(pageable.getPageSize(), postIdx);
+        Slice<Post> postList = postRepository.findAllByDeletedIsFalseOrderByIdDesc(PageRequest.of(0, postIdx));
+        postListResponseDto.setCurrentSize(postList.getNumberOfElements());
+        log.info("postList.getNumberOfElements() : {}" ,postList.getNumberOfElements());
+        for (Post post : postList) {
+            //해당 글번호에 대한 댓글 목록 조회
+            List<Comment> commentList = commentService.getCommentList(post.getId());
+            
+            //작성자 profileUrl 조회
+            String profileUrl = userService.getProfileUrl(post.getUserId());
+            
+            postListResponseDto.addPostList(new PostResponseDto(post, commentList, profileUrl));
+        }
+        
         return postListResponseDto;
     }
 
