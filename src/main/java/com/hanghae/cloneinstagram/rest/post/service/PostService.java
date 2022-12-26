@@ -87,6 +87,9 @@ public class PostService {
         //게시글 삭제 - soft delete
         post.update();
 
+        //해시태그 삭제
+        hashtagService.deleteHashtag(postId);
+
         return CommonStatusCode.DELETE_POST;
     }
 

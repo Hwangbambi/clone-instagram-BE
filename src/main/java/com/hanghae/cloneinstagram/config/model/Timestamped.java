@@ -21,9 +21,6 @@ public class Timestamped {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-    
-//    @CreatedBy
-//    private String createdUsername;
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
