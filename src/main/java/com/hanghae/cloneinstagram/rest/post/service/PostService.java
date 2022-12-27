@@ -36,6 +36,7 @@ public class PostService {
      private final UserService userService;
      private final AwsS3Service awsS3Service;
      
+     // 게시글 전체 불러오기 (팔로우 적용전임)
      @Transactional (readOnly = true)
      public PostListResponseDto.totalResponseDto getPosts(String search, int postIdx) {
           PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
@@ -65,6 +66,7 @@ public class PostService {
           return postListResponseDto;
      }
      
+     // 게시글 저장
      @Transactional
      public PostResponseDto.saveResponse savePost(PostRequestDto postRequestDto) {
           User user = SecurityUtil.getCurrentUser();
@@ -89,6 +91,7 @@ public class PostService {
           
      }
      
+     //게시글 삭제
      @Transactional
      public StatusCode deletePost(Long postId) {
           User user = SecurityUtil.getCurrentUser();
@@ -123,6 +126,7 @@ public class PostService {
           return CommonStatusCode.DELETE_POST;
      }
      
+     // 게시글 수정페이지 불러올때 게시글 간단정보 불러오기용
      @Transactional (readOnly = true)
      public PostResponseDto.getOriginalPost getOriginalPost(Long postId) {
           Post post = postRepository.findById(postId).orElseThrow(
@@ -132,7 +136,7 @@ public class PostService {
           return new PostResponseDto.getOriginalPost(post);
      }
      
-     
+     // 게시글 상세조회 (팔로우 적용전)
      @Transactional (readOnly = true)
      public PostResponseDto getPost(Long postId) {
           Post post = postRepository.findById(postId).orElseThrow(
@@ -152,6 +156,7 @@ public class PostService {
           return new PostResponseDto(post, commentList, profileUrl);
      }
      
+     // 게시글 수정
      @Transactional
      public StatusCode updatePost(Long postId, PostRequestDto postRequestDto) {
           User user = SecurityUtil.getCurrentUser();
