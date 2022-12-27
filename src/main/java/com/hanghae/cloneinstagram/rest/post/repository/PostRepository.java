@@ -40,8 +40,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      
      @Query (
           nativeQuery = true,
-          value = "select post.*, u2.username, u2.profile_url from post join " +
-               "users u2 on post.user_id = u2.id " +
+          value = "select post.*, u.username, u.profile_url from post join " +
+               "users u on post.user_id = u.id " +
+               "where post.deleted is false and u.deleted is false " +
                "order by id desc limit :size" )
      List<PostUsernameInterface> findAllByDeletedIsFalseAndByUserOrderByIdDesc(int size);
      
