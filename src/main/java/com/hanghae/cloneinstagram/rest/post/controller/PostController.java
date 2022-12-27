@@ -48,7 +48,7 @@ public class PostController {
     }
     
     @ApiOperation(value = "게시글 수정")
-    @PutMapping("/posts/{postId}")
+    @PatchMapping("/posts/{postId}")
     public PrivateResponseBody updatePost(@PathVariable Long postId,
                                           @ModelAttribute PostRequestDto postRequestDto) {
         return new PrivateResponseBody(postService.updatePost(postId,postRequestDto));
