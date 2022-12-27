@@ -33,12 +33,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                "order by id desc limit :size" )
      List<PostUsernameInterface> findAllByUsernameAndDeletedIsFalseOrderByIdDesc(int size, String search);
      
-     @Query (
-          nativeQuery = true,
-          value = "select p.* from post p join hashtag h on p.id = h.post_id " +
-               "where p.deleted is false and h.hashtag like %:search% " +
-               "order by p.id desc ")
-     List<Post> findAllByHashtagAndDeletedIsFalseOrderByIdDesc(PageRequest page, String search);
      
      List<Post> findByDeletedIsFalseOrderByCreatedAtDesc();
      
