@@ -6,7 +6,6 @@ import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.dto.CommentResponseDto;
-import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
 import com.hanghae.cloneinstagram.rest.comment.service.CommentService;
 import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
@@ -17,7 +16,6 @@ import com.hanghae.cloneinstagram.rest.user.model.User;
 import com.hanghae.cloneinstagram.rest.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +53,7 @@ public class PostService {
                     // 전제게시글 조회시 댓글은 2개까지만 조회
                     List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId)
                          .stream().map(CommentResponseDto::new).collect(Collectors.toList());
-                    postResponse.addCommentResponseDto(commentResponseDtoList);
+                    postResponse.addCommentResponseDtos(commentResponseDtoList);
                     postResponse.setCommentsNum(commentResponseDtoList.size());
                     return postResponse;
                })
@@ -139,21 +137,17 @@ public class PostService {
      // 게시글 상세조회 (팔로우 적용전)
      @Transactional (readOnly = true)
      public PostResponseDto getPost(Long postId) {
-          Post post = postRepository.findById(postId).orElseThrow(
+          // 게시글 아이디로 찾기 (게시글 삭제여부, 작성자 탈퇴여부 확인, username, profileUrl같이 들고오기)
+          PostUsernameInterface postInterface = postRepository.findByIdAndDeletedIsFalseAndByUserOrderByIdDesc(postId).orElseThrow(
                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
+          PostResponseDto postResponseDto = new PostResponseDto(postInterface);
           
-          //삭제된 게시글이라면
-          if (post.isDeleted()) {
-               throw new RestApiException(CommonStatusCode.NO_ARTICLE);
-          }
+          List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId)
+                                                                 .stream().map(CommentResponseDto::new).collect(Collectors.toList());
+          postResponseDto.addCommentResponseDtos(commentResponseDtoList);
           
-          List<Comment> commentList = commentService.getCommentList(postId);
-          
-          //작성자 profileUrl 조회
-          String profileUrl = userService.getProfileUrl(post.getUserId());
-          
-          return new PostResponseDto(post, commentList, profileUrl);
+          return postResponseDto;
      }
      
      // 게시글 수정

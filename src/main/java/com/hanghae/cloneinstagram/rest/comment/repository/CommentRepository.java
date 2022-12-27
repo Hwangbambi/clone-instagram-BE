@@ -15,10 +15,18 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
          nativeQuery = true,
          value = "select c.id, c.content, c.created_at, u.username, u.profile_url " +
               "from comment c join users u on c.user_id = u.id " +
-              "where c.deleted is false " +
+              "where c.post_id = :postId and c.deleted is false and u.deleted is false " +
               "order by c.id desc " +
               "limit 2 "
     )
     List<CommentUsernameInterface> findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(Long postId);
     
+    @Query(
+         nativeQuery = true,
+         value = "select c.id, c.content, c.created_at, u.username, u.profile_url " +
+              "from comment c join users u on c.user_id = u.id " +
+              "where c.post_id = :postId and c.deleted is false and u.deleted is false " +
+              "order by c.id desc "
+    )
+    List<CommentUsernameInterface> findByIdAndDeletedIsFalseOrderByCreatedAtDesc(Long postId);
 }

@@ -41,7 +41,7 @@ public class PostResponseDto {
         this.commentsNum = commentList.size();
 //        this.commentList = commentList;
     }
-    public void addCommentResponseDto(List<CommentResponseDto> commentResponseDtoList){
+    public void addCommentResponseDtos(List<CommentResponseDto> commentResponseDtoList){
         this.commentResponseList = commentResponseDtoList;
     }
     
