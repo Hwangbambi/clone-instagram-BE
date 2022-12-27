@@ -35,26 +35,6 @@ public class PostService {
      private final CommentService commentService;
      private final UserService userService;
      private final AwsS3Service awsS3Service;
-
-//     @Transactional (readOnly = true)
-//     public PostListResponseDto getPosts() {
-//          PostListResponseDto postListResponseDto = new PostListResponseDto();
-//
-//          //작성일 기준 내림차순, deleted is false
-//          List<Post> postList = postRepository.findByDeletedIsFalseOrderByCreatedAtDesc();
-//
-//          for (Post post : postList) {
-//               //해당 글번호에 대한 댓글 목록 조회
-//               List<Comment> commentList = commentService.getCommentList(post.getId());
-//
-//               //작성자 profileUrl 조회
-//               String profileUrl = userService.getProfileUrl(post.getUserId());
-//
-//               postListResponseDto.addPostList(new PostResponseDto(post, commentList, profileUrl));
-//          }
-//
-//          return postListResponseDto;
-//     }
      
      @Transactional (readOnly = true)
      public PostListResponseDto.totalResponseDto getPosts(String search, int postIdx) {
