@@ -92,10 +92,10 @@ public class PostService {
      @Transactional
      public StatusCode deletePost(Long postId) {
           User user = SecurityUtil.getCurrentUser();
-          
-          //조회되는 게시글 없을 때
-          Post post = postRepository.findById(postId).orElseThrow(
-               () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
+
+          //게시글 존재, delete is False
+          Post post = postRepository.findByIdAndDeletedIsFalse(postId).orElseThrow(
+                  () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
           
           //삭제된 게시글이라면
