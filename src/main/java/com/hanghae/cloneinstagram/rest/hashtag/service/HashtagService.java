@@ -17,18 +17,17 @@ import java.util.regex.Pattern;
 public class HashtagService {
 
     private final HashtagRepository hashtagRepository;
-
+    
     @Transactional
     public void saveHashtag(Long id, String content) {
-
-        //문자열 첫번째 : #, 문자열 마지막 : 공백
-        Pattern pattern = Pattern.compile("[#](.*?)[\\s]");
-
+        //해시태그 정규식
+        Pattern pattern = Pattern.compile("#[^\\s#]+");
         Matcher matcher = pattern.matcher(content);
-
+        
         while (matcher.find()) {
-            System.out.println(matcher.group(1));
-            hashtagRepository.save(new Hashtag(id,matcher.group(1)));
+            String hashtag = matcher.group().split("#")[1];
+            System.out.println("hashtag : " + hashtag);
+            hashtagRepository.save(new Hashtag(id,hashtag));
         }
     }
 

@@ -53,14 +53,4 @@ public class PostController {
                                           @ModelAttribute PostRequestDto postRequestDto) {
         return new PrivateResponseBody(postService.updatePost(postId,postRequestDto));
     }
-
-
-
-
-
-
-
-
-
-
 }
