@@ -21,7 +21,7 @@ public class PostController {
          @RequestParam(value="search", required = false) String search)
     {
 //        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
-        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts2(search, size));
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts(search, size));
     }
 
     @ApiOperation(value = "게시글 상세 조회")

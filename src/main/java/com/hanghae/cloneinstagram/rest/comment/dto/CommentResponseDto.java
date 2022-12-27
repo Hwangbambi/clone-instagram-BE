@@ -15,12 +15,26 @@ public class CommentResponseDto {
      @Schema(description = "댓글작성 유저명")
      private String username;
      
+     @Schema(description = "댓글작성 유저 프로필url")
+     private String profileUrl;
+     
      @Schema(description = "댓글 내용")
      private String content;
+     
+     @Schema(description = "로그인 유저의 댓글 좋아요 유무")
+     private Boolean like;
      
      public CommentResponseDto(Comment comment, String username) {
           this.id = comment.getId();
           this.username = username;
           this.content = comment.getContent();
+     }
+     
+     public CommentResponseDto(CommentUsernameInterface commentUsernameInterface) {
+          this.id = commentUsernameInterface.getId();
+          this.username = commentUsernameInterface.getUsername();
+          this.profileUrl = commentUsernameInterface.getProfile_url();
+          this.content = commentUsernameInterface.getContent();
+          this.like = false; // 수정필요
      }
 }
