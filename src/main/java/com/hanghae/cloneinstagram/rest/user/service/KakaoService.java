@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.cloneinstagram.config.jwt.JwtUtil;
+import com.hanghae.cloneinstagram.config.security.UserDetailsImpl;
 import com.hanghae.cloneinstagram.rest.user.dto.KakaoUserInfoDto;
 import com.hanghae.cloneinstagram.rest.user.dto.LoginResponseDto;
 import com.hanghae.cloneinstagram.rest.user.model.User;
@@ -15,6 +16,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +29,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 @Slf4j
 @Service
@@ -33,11 +37,11 @@ public class KakaoService {
      private final PasswordEncoder passwordEncoder;
      private final UserRepository userRepository;
      private final JwtUtil jwtUtil;
-     
      @Value ("${kakao.api.key}")
      private String KAKAO_REST_API_KEY;
      
      public LoginResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+          log.info("service!!!!!!!");
           // 1. "인가 코드"로 "액세스 토큰" 요청
           String accessToken = getToken(code);
           
@@ -51,7 +55,8 @@ public class KakaoService {
           String createToken = jwtUtil.createToken(kakaoUser.getUsername());
           response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(kakaoUser.getUsername()));
           
-          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl());
+          // 강제로그인
+          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), forceLogin(kakaoUser));
      }
      
      // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -140,5 +145,18 @@ public class KakaoService {
                userRepository.save(kakaoUser);
           }
           return kakaoUser;
+     }
+     
+     // 강제 로그인 및 토큰생성
+     private String forceLogin(User kakaoUser) {
+          UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+          Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+          
+          //TODO : refreshToken 구현 필요
+          log.info("authentication.getName(): {}", authentication.getName());
+          String accessToken = jwtUtil.createToken(kakaoUser.getUsername());
+          
+          return accessToken;
      }
 }

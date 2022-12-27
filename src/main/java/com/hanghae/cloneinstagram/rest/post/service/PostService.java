@@ -99,11 +99,7 @@ public class PostService {
           Post post = postRepository.findByIdAndDeletedIsFalse(postId).orElseThrow(
                   () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
-          
-          //삭제된 게시글이라면
-          if (post.isDeleted()) {
-               throw new RestApiException(CommonStatusCode.NO_ARTICLE);
-          }
+          // 게시글 삭제시 게시글 좋아요테이블에도 삭제
           
           //작성자 불일치
           if (!postRepository.existsByIdAndUserId(postId, user.getId())) {

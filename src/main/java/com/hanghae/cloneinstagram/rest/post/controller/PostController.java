@@ -6,8 +6,10 @@ import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -20,6 +22,8 @@ public class PostController {
          @RequestParam(value="size", defaultValue = "5") int size,
          @RequestParam(value="search", required = false) String search)
     {
+        log.info("controller!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    
         return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts(search, size));
     }
 
