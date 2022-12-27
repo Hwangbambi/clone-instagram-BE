@@ -37,14 +37,15 @@ public class PostService {
      // 게시글 전체 불러오기 (팔로우 적용전임)
      @Transactional (readOnly = true)
      public PostListResponseDto.totalResponseDto getPosts(String search, int postIdx) {
+          User user = SecurityUtil.getCurrentUser();
           PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
           List<PostUsernameInterface> postUsernameInterfaceList = new ArrayList<>();
           // search 가 username or hashtag
           if (search == null || search.equals("")) { // 검색 x
                //작성일 기준 내림차순, deleted is false
-               postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserOrderByIdDesc(postIdx);
+               postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserOrderByIdDesc(postIdx, user.getId());
           } else { // username으로 검색
-               postUsernameInterfaceList = postRepository.findAllByUsernameAndDeletedIsFalseOrderByIdDesc(postIdx, search);
+               postUsernameInterfaceList = postRepository.findAllByUsernameAndDeletedIsFalseOrderByIdDesc(postIdx, search, user.getId());
           }
           List<PostResponseDto> postResponseDto = postUsernameInterfaceList.stream()
                .map(PostResponseDto::new)
@@ -138,7 +139,8 @@ public class PostService {
      @Transactional (readOnly = true)
      public PostResponseDto getPost(Long postId) {
           // 게시글 아이디로 찾기 (게시글 삭제여부, 작성자 탈퇴여부 확인, username, profileUrl같이 들고오기)
-          PostUsernameInterface postInterface = postRepository.findByIdAndDeletedIsFalseAndByUserOrderByIdDesc(postId).orElseThrow(
+          User user = SecurityUtil.getCurrentUser();
+          PostUsernameInterface postInterface = postRepository.findByIdAndDeletedIsFalseAndByUserOrderByIdDesc(postId, user.getId()).orElseThrow(
                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
           PostResponseDto postResponseDto = new PostResponseDto(postInterface);
