@@ -2,18 +2,20 @@ package com.hanghae.cloneinstagram.rest.like.service;
 
 import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
+import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.like.model.PostLike;
 import com.hanghae.cloneinstagram.rest.like.repository.LikeRepository;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LikeService {
@@ -22,31 +24,24 @@ public class LikeService {
      private final LikeRepository likeRepository;
      
      @Transactional
-     public PrivateResponseBody PostLike(Long postId) {
+     public StatusCode PostLike(Long postId) {
           User user = SecurityUtil.getCurrentUser();
           Post post = postRepository.findById(postId).orElseThrow(
                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
-     
-//          Likes like = likeRepository.findByUserIdAndPostId(user.getId(), post.getId()).orElseGet(new Likes());
-//          if(like == null){//좋아요최초로누를때
-//               post.like();
-//               Likes likes = new Likes(user, post);
-//               likeRepository.save(likes);
-//               return new ResponseEntity<>(new PrivateResponseBody(CommonStatusCode.POST_LIKE, new LikeResponseDto(likes.isLike(), post.getLikes())), HttpStatus.OK);
-//          } else {
-//               if(like.isLike()){//좋아요눌려있을때취소
-//                    post.likeCancel();
-//                    likeRepository.deleteById(like.getId());
-//                    return new ResponseEntity<>(new PrivateResponseBody(CommonStatusCode.POST_LIKE_CANCEL, new LikeResponseDto(false, post.getLikes())), HttpStatus.OK);
-//               } else{//안눌려있을때다시좋아요
-//                    post.like();
-//                    Likes likes = new Likes(user, post);
-//                    likeRepository.save(likes);
-//                    return new ResponseEntity<>(new PrivateResponseBody(CommonStatusCode.POST_LIKE, new LikeResponseDto(likes.isLike(), post.getLikes())), HttpStatus.OK);
-//               }
-//          }
-          return null;
+          
+          // 로그인한 유저의 아이디, 게시글의 아이디 로 검색
+          PostLike postLike = likeRepository.findByUserIdAndPostId(user.getId(), post.getId()).orElseGet(new PostLike());
+          if(postLike != null){ // 좋아요 눌러져있을때
+               post.unLike(); // 게시글 좋아요수 --
+               likeRepository.delete(postLike); // 좋아요 테이블에서 삭제
+               return CommonStatusCode.POST_LIKE_CANCEL;
+          }else{
+               PostLike newPostLike = new PostLike(post.getId(), user.getId());
+               post.addLike(); // 게시글 좋아요수 ++
+               likeRepository.save(newPostLike);
+               return CommonStatusCode.POST_LIKE;
+          }
      }
      
      // 해당 게시글 좋아요 누른 사람들 리스트
