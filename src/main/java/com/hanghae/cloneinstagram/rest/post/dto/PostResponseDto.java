@@ -5,39 +5,57 @@ import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class PostResponseDto {
     private Long id;
     private String profileUrl;
-    private Long userId;
+    
+    private String username;
     private String content;
     private String imgUrl;
     private int likes;
+    private boolean like;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private int commentsNum;
-    private List<Comment> commentList = new ArrayList<>();
+    private List<CommentResponseDto> commentResponseList = new ArrayList<>();
 
     public PostResponseDto(Post post, List<Comment> commentList, String profileUrl) {
         this.id = post.getId();
-        this.userId = post.getUserId();
+        // username 채워야함
         this.profileUrl = profileUrl;
         this.content = post.getContent();
         this.likes = post.getLikes();
+        this.like = false; // 수정필요
         this.imgUrl = post.getImgUrl();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.commentsNum = commentList.size();
-        this.commentList = commentList;
+//        this.commentList = commentList;
     }
-
+    public void addCommentResponseDto(List<CommentResponseDto> commentResponseDtoList){
+        this.commentResponseList = commentResponseDtoList;
+    }
+    
+    public PostResponseDto(PostUsernameInterface postUsernameInterface) {
+        this.id = postUsernameInterface.getId();
+        this.profileUrl = postUsernameInterface.getProfile_url();
+        this.content = postUsernameInterface.getContent();
+        this.likes = postUsernameInterface.getLikes();
+        this.like = false; // 수정필요
+        this.imgUrl = postUsernameInterface.getImg_url();
+        this.createdAt = postUsernameInterface.getCreated_at();
+        this.modifiedAt = postUsernameInterface.getModified_at();
+    }
+    
     @Getter
     @NoArgsConstructor
     public static class saveResponse {
