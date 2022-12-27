@@ -34,7 +34,7 @@ public class CommentService {
     }
     
     @Transactional
-     public CommentResponseDto saveComment(Long postId, CommentRequestDto requestDto) {
+     public CommentResponseDto.simpleCommentResponseDto saveComment(Long postId, CommentRequestDto requestDto) {
          // 토큰으로 유저(작성자) 가져오기
          User user = SecurityUtil.getCurrentUser();
          // postId 로 게시글 존재유무, 삭제유무
@@ -51,6 +51,6 @@ public class CommentService {
               .build();
          // 댓글 저장
          comment = commentRepository.save(comment);
-         return new CommentResponseDto(comment, user.getUsername());
+         return new CommentResponseDto.simpleCommentResponseDto(comment, user.getUsername());
      }
 }

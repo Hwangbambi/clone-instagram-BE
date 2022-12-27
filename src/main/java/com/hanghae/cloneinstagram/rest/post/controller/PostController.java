@@ -20,14 +20,12 @@ public class PostController {
          @RequestParam(value="size", defaultValue = "5") int size,
          @RequestParam(value="search", required = false) String search)
     {
-//        return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts());
         return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts(search, size));
     }
 
     @ApiOperation(value = "게시글 상세 조회")
     @GetMapping("/posts/{postId}")
     public PrivateResponseBody getPost(@PathVariable Long postId) {
-
         return new PrivateResponseBody(CommonStatusCode.OK,postService.getPost(postId));
     }
 

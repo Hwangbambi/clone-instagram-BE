@@ -3,7 +3,6 @@ package com.hanghae.cloneinstagram.rest.post.dto;
 import java.time.LocalDateTime;
 
 public interface PostUsernameInterface {
-     
      Long getId();
      String getProfile_url();
      String getContent();

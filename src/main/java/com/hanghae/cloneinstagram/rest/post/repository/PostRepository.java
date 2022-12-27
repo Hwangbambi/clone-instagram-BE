@@ -5,6 +5,7 @@ import com.hanghae.cloneinstagram.rest.post.model.Post;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,11 +41,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      
      @Query (
           nativeQuery = true,
-          value = "select post.*, u.username, u.profile_url from post join " +
+          value = "select post.*, u.username, u.profile_url " +
+               "from post join " +
                "users u on post.user_id = u.id " +
                "where post.deleted is false and u.deleted is false " +
                "order by id desc limit :size" )
-     List<PostUsernameInterface> findAllByDeletedIsFalseAndByUserOrderByIdDesc(int size);
+     List<PostUsernameInterface> findAllByDeletedIsFalseAndByUserOrderByIdDesc(@Param("size") int size);
      
      Optional<Post> findByIdAndDeletedIsFalse(Long postId);
 }
