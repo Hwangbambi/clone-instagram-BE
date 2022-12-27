@@ -30,8 +30,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     "order by p.id desc ) as B " +
                "order by id desc) postId on post.id = postId.id " +
                "join users u2 on post.user_id = u2.id " +
+               "where u2.deleted is false " +
                "order by id desc limit :size" )
      List<PostUsernameInterface> findAllByUsernameAndDeletedIsFalseOrderByIdDesc(int size, String search);
+     //deleted user 확인
      
      
      List<Post> findByDeletedIsFalseOrderByCreatedAtDesc();
