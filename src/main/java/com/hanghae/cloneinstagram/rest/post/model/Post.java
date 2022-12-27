@@ -44,4 +44,9 @@ public class Post extends Timestamped {
     public void update() {
         this.deleted = true;
     }
+    
+    public void update(PostRequestDto postRequestDto, String imageUrl) {
+        this.content = postRequestDto.getContent();
+        this.imgUrl = imageUrl;
+    }
 }

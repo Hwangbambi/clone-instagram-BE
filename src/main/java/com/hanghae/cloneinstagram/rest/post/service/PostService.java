@@ -171,4 +171,46 @@ public class PostService {
           
           return new PostResponseDto(post, commentList, profileUrl);
      }
+     
+     @Transactional
+     public StatusCode updatePost(Long postId, PostRequestDto postRequestDto) {
+          User user = SecurityUtil.getCurrentUser();
+          
+          Post post = postRepository.findById(postId).orElseThrow(
+               () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
+          );
+          
+          //user 와 작성자 일치 여부 확인
+          if (!user.getId().equals(post.getUserId())) {
+               throw new RestApiException(CommonStatusCode.INVALID_USER);
+          }
+          
+          String imageUrl = null;
+          
+          //기존 글에 첨부파일 존재시
+          if (post.getImgUrl() != null) {
+               if (!postRequestDto.getFile().isEmpty()) {
+                    //첨부파일 수정시 기존 첨부파일 삭제
+                    String fileName = post.getImgUrl().split(".com/")[1];
+                    awsS3Service.deleteFile(fileName);
+                    
+                    //새로운 파일로 업로드
+                    imageUrl = awsS3Service.uploadFile(postRequestDto.getFile());
+                    
+               } else {
+                    //첨부파일 수정 안함
+                    imageUrl = post.getImgUrl();
+               }
+          } else {
+               //첨부파일 없는 글에
+               if (!postRequestDto.getFile().isEmpty()) {
+                    //첨부파일 적용
+                    imageUrl = awsS3Service.uploadFile(postRequestDto.getFile());
+               }
+          }
+          
+          post.update(postRequestDto, imageUrl);
+          
+          return CommonStatusCode.UPDATE_POST;
+     }
 }

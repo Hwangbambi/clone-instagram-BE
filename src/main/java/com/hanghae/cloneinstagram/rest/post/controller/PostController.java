@@ -46,9 +46,13 @@ public class PostController {
     public PrivateResponseBody getOriginalPost(@PathVariable Long postId) {
         return new PrivateResponseBody(CommonStatusCode.OK,postService.getOriginalPost(postId));
     }
-
-    /*@ApiOperation(value = "게시글 수정")
-    @PatchMapping("/posts/{postId}")*/
+    
+    @ApiOperation(value = "게시글 수정")
+    @PutMapping("/posts/{postId}")
+    public PrivateResponseBody updatePost(@PathVariable Long postId,
+                                          @ModelAttribute PostRequestDto postRequestDto) {
+        return new PrivateResponseBody(postService.updatePost(postId,postRequestDto));
+    }
 
 
 
