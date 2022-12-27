@@ -53,10 +53,11 @@ public class KakaoService {
           
           // 4. JWT 토큰 반환
           String createToken = jwtUtil.createToken(kakaoUser.getUsername());
-          response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(kakaoUser.getUsername()));
+          response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
           
           // 강제로그인
-          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), forceLogin(kakaoUser));
+//          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), forceLogin(kakaoUser));
+          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), "testToken");
      }
      
      // 1. "인가 코드"로 "액세스 토큰" 요청

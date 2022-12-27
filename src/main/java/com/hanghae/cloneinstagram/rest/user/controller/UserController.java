@@ -63,10 +63,9 @@ public class UserController {
      //https://kauth.kakao.com/oauth/authorize?client_id=ced49bfdb65f5f152e2e43f12e88bd86&redirect_uri=http://localhost:8080/api/user/kakao/callback&response_type=code
      @Operation(summary = "카카오 로그인 콜백", description = "email, password 로 로그인")
      @GetMapping ("/kakao/callback")
-//     public PrivateResponseBody<LoginResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-     public PrivateResponseBody<LoginResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException {
-          LoginResponseDto loginResponseDto = kakaoService.kakaoLogin(code, response);
-          return new PrivateResponseBody(UserStatusCode.USER_LOGIN_SUCCESS, loginResponseDto);
+     public PrivateResponseBody<LoginResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+          return new PrivateResponseBody(UserStatusCode.USER_LOGIN_SUCCESS, kakaoService.kakaoLogin(code, response));
+     }
 //          response.setContentType("application/json");
 //          ObjectMapper objectMapper = new ObjectMapper();
 //          String json = objectMapper.writeValueAsString(loginResponseDto);
@@ -76,5 +75,5 @@ public class UserController {
 //          log.info("response.sendRedirect");
 //          response.sendRedirect("localhost:8080/api/posts");
 //          return "redirect:localhost:3000/home";
-     }
+
 }
