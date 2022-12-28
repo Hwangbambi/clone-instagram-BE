@@ -3,15 +3,16 @@ package com.hanghae.cloneinstagram.rest.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
+import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.UserStatusCode;
 import com.hanghae.cloneinstagram.config.jwt.JwtUtil;
-import com.hanghae.cloneinstagram.rest.user.dto.LoginRequestDto;
-import com.hanghae.cloneinstagram.rest.user.dto.LoginResponseDto;
-import com.hanghae.cloneinstagram.rest.user.dto.SignupRequestDto;
+import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
+import com.hanghae.cloneinstagram.rest.user.dto.*;
 import com.hanghae.cloneinstagram.rest.user.repository.UserRepository;
 import com.hanghae.cloneinstagram.rest.user.service.KakaoService;
 import com.hanghae.cloneinstagram.rest.user.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -57,6 +58,12 @@ public class UserController {
      @PostMapping ("/login")
      public PrivateResponseBody<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
           return new PrivateResponseBody(UserStatusCode.USER_LOGIN_SUCCESS, userService.login(loginRequestDto, response));
+     }
+     
+     @ApiOperation (value = "프로필 이미지 변경")
+     @PatchMapping("/update")
+     public PrivateResponseBody<ProfileResponseDto> updateProfile(@ModelAttribute ProfileRequestDto requestDto) {
+          return new PrivateResponseBody(UserStatusCode.CHANGE_PROFILEIMG_SUCCESS,userService.updateProfile(requestDto));
      }
      
      //https://kauth.kakao.com/oauth/authorize?client_id=ced49bfdb65f5f152e2e43f12e88bd86&redirect_uri=https://sparta-hippo.shop/api/user/kakao/callback&response_type=code

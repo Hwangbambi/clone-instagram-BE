@@ -66,4 +66,12 @@ public class User implements Supplier<User> {
      public User get() {
           return null;
      }
+     
+     public void deleteImg() {
+          this.profileUrl = null;
+     }
+     
+     public void updateImg(String newImgUrl) {
+          this.profileUrl = newImgUrl;
+     }
 }
