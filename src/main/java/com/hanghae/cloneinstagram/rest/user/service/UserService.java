@@ -45,7 +45,7 @@ public class UserService {
      @Transactional
      public LoginResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
           // 사용자 확인
-          User user = userRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
+          User user = userRepository.findByEmailAndKakaoIdIsNull(loginRequestDto.getEmail()).orElseThrow(
                () -> new RestApiException(UserStatusCode.NO_USER)
           );
           // 비밀번호 확인
