@@ -4,6 +4,9 @@ import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
+import com.hanghae.cloneinstagram.rest.like.model.PostLike;
 import com.hanghae.cloneinstagram.rest.like.repository.LikeRepository;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
@@ -13,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,10 +57,20 @@ public class LikeService {
      
      // 해당 게시글 좋아요 누른 사람들 리스트
      @Transactional(readOnly = true)
-     public PrivateResponseBody getPostLikes(Long postId) {
-          // 내가 팔로우 한지 안한지 도 보내주기. isFollow true, false,
+     public List<LikePostUsersResponseDto> getPostLikes(Long postId) {
+          // 내가 팔로우 한지 안한지 도 보내주기. isFollow : true, false
           // 팔로우 한사람이 위쪽
           // 리스트를 보내주기
-          return null;
+          List<LikePostUsersResponseDto> likePostUsersResponseDtos = new ArrayList<>();
+
+          List<LikePostUserInterface> likePostUserInterfaces = likeRepository.findByPostId(postId);
+
+          for (LikePostUserInterface likePostUser : likePostUserInterfaces) {
+               //좋아요 누른 유저 팔로우 유무 확인 - follow 구현 후 추후 추가
+
+
+               likePostUsersResponseDtos.add(new LikePostUsersResponseDto(likePostUser));
+          }
+          return likePostUsersResponseDtos;
      }
 }

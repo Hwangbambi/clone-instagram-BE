@@ -10,17 +10,21 @@ import java.util.function.Supplier;
 @Entity (name = "post_like")
 @RequiredArgsConstructor
 @Getter
+@Table(indexes = @Index(name = "idx__postId", columnList = "postId"))
 public class PostLike extends Timestamped implements Supplier<PostLike> {
-     
+
      @Id
      @GeneratedValue (strategy = GenerationType.IDENTITY)
      private Long id;
-     
-     @Column (nullable = false)
-     private boolean isLike;
-     
+
+     @Column(nullable = false)
+     private Long postId;
+
+     @Column(nullable = false)
+     private Long userId;
+
      @Override
      public PostLike get() {
-          return this;
+          return null;
      }
 }
