@@ -54,10 +54,9 @@ public class KakaoService {
           // 4. JWT 토큰 반환
           String createToken = jwtUtil.createToken(kakaoUser.getUsername());
           response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
-          
           // 강제로그인
-//          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), forceLogin(kakaoUser));
-          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), "testToken");
+          forceLogin(kakaoUser);
+          return new LoginResponseDto(kakaoUser.getUsername(), kakaoUser.getProfileUrl(), createToken);
      }
      
      // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -149,15 +148,9 @@ public class KakaoService {
      }
      
      // 강제 로그인 및 토큰생성
-     private String forceLogin(User kakaoUser) {
+     private void forceLogin(User kakaoUser) {
           UserDetails userDetails = new UserDetailsImpl(kakaoUser);
           Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
           SecurityContextHolder.getContext().setAuthentication(authentication);
-          
-          //TODO : refreshToken 구현 필요
-          log.info("authentication.getName(): {}", authentication.getName());
-          String accessToken = jwtUtil.createToken(kakaoUser.getUsername());
-          
-          return accessToken;
      }
 }
