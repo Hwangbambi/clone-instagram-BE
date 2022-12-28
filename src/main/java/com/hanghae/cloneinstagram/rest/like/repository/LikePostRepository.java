@@ -12,7 +12,19 @@ import java.util.Optional;
 
 public interface LikePostRepository extends JpaRepository<PostLike, Long> {
      Optional<PostLike> findByUserIdAndPostId(Long postId, Long userId);
-    @Query(value = "select u.username, u.profile_url from post_like pl join users u on pl.user_id = u.id\n" +
-            "where u.deleted is false and pl.post_id = :postId", nativeQuery = true)
-    List<LikePostUserInterface> findByPostId(@Param("postId") long postId);
+     
+     // 해당게시글의 좋아요리스트 (게시글 삭제시 관련좋아요는 delete되니 상관x)
+     // 내가 팔로우 한지 안한지 도 보내주기. isFollow : true, false
+     // 팔로우 한사람이 위쪽, 탈퇴한 유저는 빼고
+     @Query (nativeQuery = true,
+          value = "select a.username, a.profile_url, a.id, follow.user_id as follow " +
+               "from (select u.username, u.profile_url, u.id as id " +
+                    "from post_like pl join users u on pl.user_id = u.id " +
+                    "where pl.post_id = :postId and u.deleted is false) a " +
+               "left join follow on a.id = follow.follow_id and follow.user_id = :loggedUserId " +
+               "order by Follow desc, a.id")
+     List<LikePostUserInterface> findByPostId(@Param ("postId")Long postId, @Param("loggedUserId")Long loggedUserId);
+     
+     void deleteByPostId(Long postId);
+     
 }
