@@ -30,6 +30,14 @@ public class PostController {
     public PrivateResponseBody getPost(@PathVariable Long postId) {
         return new PrivateResponseBody(CommonStatusCode.OK,postService.getPost(postId));
     }
+    
+    @ApiOperation(value = "좋아요한 게시글 전체 조회")
+    @GetMapping("/posts/likes")
+    public PrivateResponseBody getLikePosts(
+         @RequestParam(value="size", defaultValue = "5") int size)
+    {
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getLikePosts(size));
+    }
 
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
     @PostMapping("/posts")

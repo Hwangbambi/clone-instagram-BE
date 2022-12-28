@@ -64,4 +64,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      
      
      Optional<Post> findByIdAndDeletedIsFalse(Long postId);
+     
+     // 로그인유저가 좋아요누른 게시글
+     @Query (
+          nativeQuery = true,
+          value = "select post.*, u.username, u.profile_url, pl.user_id as isLike  " +
+               "from post " +
+               "join users u on post.user_id = u.id " +
+               "join post_like pl on post.id = pl.post_id and pl.user_id=:loggedUserId " +
+               "where post.deleted is false and u.deleted is false " +
+               "order by id desc limit :size" )
+     List<PostUsernameInterface> findAllByDeletedIsFalseAndByUserAndUserLikeOrderByIdDesc(@Param("size")int size,  @Param("loggedUserId")Long loggedUserId);
+     
 }

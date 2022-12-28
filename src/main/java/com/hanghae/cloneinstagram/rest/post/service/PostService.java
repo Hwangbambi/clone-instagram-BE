@@ -42,22 +42,45 @@ public class PostService {
           PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
           List<PostUsernameInterface> postUsernameInterfaceList = new ArrayList<>();
           // search 가 username or hashtag
-          if (search == null || search.equals("")) { // 검색 x
+          if (search == null || search.equals("")) { // 검색 xㄲ
                //작성일 기준 내림차순, deleted is false
                postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserOrderByIdDesc(postIdx, user.getId());
           } else { // username으로 검색
                postUsernameInterfaceList = postRepository.findAllByUsernameAndDeletedIsFalseOrderByIdDesc(postIdx, search, user.getId());
           }
-          List<PostResponseDto> postResponseDto = postUsernameInterfaceList.stream()
+          List<PostResponseDto> postResponseDto = postImpl2Dto(postUsernameInterfaceList, user.getId());
+          
+          postListResponseDto.setCurrentSize(postResponseDto.size());
+          postListResponseDto.setPostList(postResponseDto);
+          return postListResponseDto;
+     }
+     
+     //로그인한 유저가 좋아요누른 게시글 목록
+     @Transactional (readOnly = true)
+     public PostListResponseDto.totalResponseDto getLikePosts(int size) {
+          // 로그인유저정보
+          User user = SecurityUtil.getCurrentUser();
+          // response Dto
+          PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
+          // 로그인한 유저가 좋아요누른 게시글 목록
+          List<PostUsernameInterface> postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserAndUserLikeOrderByIdDesc(size, user.getId());
+          List<PostResponseDto> postResponseDto = postImpl2Dto(postUsernameInterfaceList, user.getId());
+          
+          postListResponseDto.setCurrentSize(postResponseDto.size());
+          postListResponseDto.setPostList(postResponseDto);
+          return postListResponseDto;
+     }
+     
+     // user관련 정보 같이들고온 post게시글리스트 impl >> responseDtoList 로 변환
+     public List<PostResponseDto> postImpl2Dto(List<PostUsernameInterface> postUsernameInterfaceList, Long loggedUserId){
+          return postUsernameInterfaceList.stream()
                .map(PostResponseDto::new)
                .map(postResponse -> {
                     Long postId = postResponse.getId();
-                    // 전제게시글 조회시 댓글은 2개까지만 조회
-//                    List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId, user.getId())
-                    List<CommentUsernameInterface> commentResponseInterList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, user.getId());
+                    List<CommentUsernameInterface> commentResponseInterList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, loggedUserId);
                     int totalCommentSize = commentResponseInterList.size();
                     postResponse.setCommentsNum(totalCommentSize); // 댓글 전체갯수 set
-                    
+               
                     int limitSize = 0;
                     if(totalCommentSize >=2){
                          limitSize = 2;
@@ -67,14 +90,9 @@ public class PostService {
                     List<CommentResponseDto> commentResponseDtoList = commentResponseInterList.subList(0,limitSize).stream()
                          .map(CommentResponseDto::new).collect(Collectors.toList());
                     postResponse.addCommentResponseDtos(commentResponseDtoList);
-                    postResponse.setCommentsNum(commentResponseDtoList.size());
                     return postResponse;
                })
                .collect(Collectors.toList());
-          
-          postListResponseDto.setCurrentSize(postResponseDto.size());
-          postListResponseDto.setPostList(postResponseDto);
-          return postListResponseDto;
      }
      
      // 게시글 저장
@@ -155,7 +173,8 @@ public class PostService {
           
           List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, user.getId())
                                                                  .stream().map(CommentResponseDto::new).collect(Collectors.toList());
-          postResponseDto.addCommentResponseDtos(commentResponseDtoList);
+          postResponseDto.addCommentResponseDtos(commentResponseDtoList); // 댓글리스트 추가
+          postResponseDto.setCommentsNum(commentResponseDtoList.size()); // 댓글개수 추가
           
           return postResponseDto;
      }
@@ -202,4 +221,6 @@ public class PostService {
           
           return CommonStatusCode.UPDATE_POST;
      }
+     
+     
 }
