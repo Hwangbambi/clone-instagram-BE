@@ -1,28 +1,24 @@
 package com.hanghae.cloneinstagram.rest.like.service;
 
-import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
 import com.hanghae.cloneinstagram.rest.like.model.CommentLike;
 import com.hanghae.cloneinstagram.rest.like.model.PostLike;
 import com.hanghae.cloneinstagram.rest.like.repository.LikeCommentRepository;
 import com.hanghae.cloneinstagram.rest.like.repository.LikePostRepository;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.workdocs.model.CommentStatusType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
