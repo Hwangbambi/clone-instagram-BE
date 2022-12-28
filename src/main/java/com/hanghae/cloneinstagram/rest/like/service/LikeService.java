@@ -1,29 +1,26 @@
 package com.hanghae.cloneinstagram.rest.like.service;
 
-import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
 import com.hanghae.cloneinstagram.rest.like.model.CommentLike;
 import com.hanghae.cloneinstagram.rest.like.model.PostLike;
 import com.hanghae.cloneinstagram.rest.like.repository.LikeCommentRepository;
 import com.hanghae.cloneinstagram.rest.like.repository.LikePostRepository;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.workdocs.model.CommentStatusType;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +41,11 @@ public class LikeService {
           
           // 로그인한 유저의 아이디, 게시글의 아이디 로 검색
           PostLike postLike = likePostRepository.findByUserIdAndPostId(user.getId(), post.getId()).orElseGet(new PostLike());
-          if(postLike != null){ // 좋아요 눌러져있을때
+          if (postLike != null) { // 좋아요 눌러져있을때
                post.unLike(); // 게시글 좋아요수 --
                likePostRepository.delete(postLike); // 좋아요 테이블에서 삭제
                return CommonStatusCode.POST_LIKE_CANCEL;
-          }else{
+          } else {
                PostLike newPostLike = new PostLike(post.getId(), user.getId());
                post.addLike(); // 게시글 좋아요수 ++
                likePostRepository.save(newPostLike);
@@ -65,11 +62,11 @@ public class LikeService {
           );
           // 로그인한 유저의 아이디, 코멘트 아이디 로 검색
           CommentLike commentLike = likeCommentRepository.findByUserIdAndCommentId(user.getId(), comment.getId()).orElseGet(new CommentLike());
-          if(commentLike != null){ // 이미 좋아요 누른상태
+          if (commentLike != null) { // 이미 좋아요 누른상태
                comment.unLike();
                likeCommentRepository.delete(commentLike);
                return CommonStatusCode.COMMENT_LIKE_CANCEL;
-          }else {
+          } else {
                CommentLike newCommentLike = new CommentLike(comment.getId(), user.getId());
                comment.addLike();
                likeCommentRepository.save(newCommentLike);
@@ -78,21 +75,19 @@ public class LikeService {
      }
      
      // 해당 게시글 좋아요 누른 사람들 리스트
-     @Transactional(readOnly = true)
+     @Transactional (readOnly = true)
      public List<LikePostUsersResponseDto> getPostLikes(Long postId) {
+          User loggedUser = SecurityUtil.getCurrentUser();
+          // 리스트를 보내주기
+          
+          // 해당게시글의 좋아요리스트 (게시글 삭제시 관련좋아요는 delete됨)
           // 내가 팔로우 한지 안한지 도 보내주기. isFollow : true, false
           // 팔로우 한사람이 위쪽
-          // 리스트를 보내주기
-          List<LikePostUsersResponseDto> likePostUsersResponseDtos = new ArrayList<>();
-
-          List<LikePostUserInterface> likePostUserInterfaces = likePostRepository.findByPostId(postId);
-
-          for (LikePostUserInterface likePostUser : likePostUserInterfaces) {
-               //좋아요 누른 유저 팔로우 유무 확인 - follow 구현 후 추후 추가
-
-
-               likePostUsersResponseDtos.add(new LikePostUsersResponseDto(likePostUser));
-          }
+          List<LikePostUserInterface> likePostUserInterfaces = likePostRepository.findByPostId(postId, loggedUser.getId());
+          List<LikePostUsersResponseDto> likePostUsersResponseDtos = likePostUserInterfaces.stream()
+                                        .map(LikePostUsersResponseDto::new)
+                                        .collect(Collectors.toList());
+          
           return likePostUsersResponseDtos;
      }
      

@@ -10,6 +10,7 @@ import com.hanghae.cloneinstagram.rest.comment.dto.CommentUsernameInterface;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
 import com.hanghae.cloneinstagram.rest.comment.service.CommentService;
 import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
+import com.hanghae.cloneinstagram.rest.like.repository.LikePostRepository;
 import com.hanghae.cloneinstagram.rest.post.dto.*;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class PostService {
+     private final LikePostRepository likePostRepository;
      private final CommentRepository commentRepository;
      private final PostRepository postRepository;
      private final HashtagService hashtagService;
@@ -129,12 +131,12 @@ public class PostService {
           Post post = postRepository.findByIdAndDeletedIsFalse(postId).orElseThrow(
                   () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
-          // 게시글 삭제시 게시글 좋아요테이블에도 삭제
-          
           //작성자 불일치
           if (!postRepository.existsByIdAndUserId(postId, user.getId())) {
                throw new RestApiException(CommonStatusCode.INVALID_USER);
           }
+          // 게시글 삭제시 게시글 좋아요테이블에도 삭제
+          likePostRepository.deleteByPostId(postId);
           
           //첨부파일 있을 경우 파일 삭제 처리
           if (post.getImgUrl() != null) {
@@ -143,7 +145,7 @@ public class PostService {
           }
           
           //게시글 삭제 - soft delete
-          post.update();
+          post.softDelete();
           
           //해시태그 삭제
           hashtagService.deleteHashtag(postId);
@@ -217,7 +219,7 @@ public class PostService {
                }
           }
           
-          post.update(postRequestDto, imageUrl);
+          post.softDelete(postRequestDto, imageUrl);
           
           return CommonStatusCode.UPDATE_POST;
      }

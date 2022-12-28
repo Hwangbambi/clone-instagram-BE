@@ -11,11 +11,11 @@ import java.util.List;
 public class LikePostUsersResponseDto {
     private String profileUrl;
     private String username;
-    //private boolean follow;
+    private boolean follow;
 
     public LikePostUsersResponseDto(LikePostUserInterface likePostUser) {
         this.profileUrl = likePostUser.getProfile_url();
         this.username = likePostUser.getUsername();
-        //this.follow = likePostUser.getFollow();
+        this.follow = likePostUser.getFollow() != null;
     }
 }

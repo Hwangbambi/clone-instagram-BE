@@ -40,11 +40,11 @@ public class Post extends Timestamped {
         this.deleted = false;
     }
 
-    public void update() {
+    public void softDelete() {
         this.deleted = true;
     }
     
-    public void update(PostRequestDto postRequestDto, String imageUrl) {
+    public void softDelete(PostRequestDto postRequestDto, String imageUrl) {
         this.content = postRequestDto.getContent();
         this.imgUrl = imageUrl;
     }

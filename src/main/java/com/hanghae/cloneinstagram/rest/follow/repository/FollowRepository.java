@@ -13,8 +13,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     /*@Query(value = "select c.id, u.username, u.profile_url, c.content, c.created_at from comment c join users u on c.user_id = u.id\n" +
             "where c.deleted is not true and u.deleted is not true and c.post_id = :postId order by c.created_at desc", nativeQuery = true)*/
     List<Follow> findByUserId(@Param("userId") long userId);
-
-    boolean existsByUserIdAndFollowId(Long userId, Long followId);
-
-    Optional<Follow> findByUserIdAndFollowId(Long userId, Long followId);
+    
+    Optional<Follow> findByUserIdAndFollowId(Long id, Long followId);
 }
