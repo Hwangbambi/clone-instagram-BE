@@ -52,7 +52,7 @@ public class PostService {
                .map(postResponse -> {
                     Long postId = postResponse.getId();
                     // 전제게시글 조회시 댓글은 2개까지만 조회
-                    List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId)
+                    List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId, user.getId())
                          .stream().map(CommentResponseDto::new).collect(Collectors.toList());
                     postResponse.addCommentResponseDtos(commentResponseDtoList);
                     postResponse.setCommentsNum(commentResponseDtoList.size());
@@ -141,7 +141,7 @@ public class PostService {
           );
           PostResponseDto postResponseDto = new PostResponseDto(postInterface);
           
-          List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId)
+          List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, user.getId())
                                                                  .stream().map(CommentResponseDto::new).collect(Collectors.toList());
           postResponseDto.addCommentResponseDtos(commentResponseDtoList);
           

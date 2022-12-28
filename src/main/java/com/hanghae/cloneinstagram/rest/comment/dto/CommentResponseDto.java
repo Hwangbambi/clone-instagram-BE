@@ -39,7 +39,7 @@ public class CommentResponseDto {
           this.username = commentUsernameInterface.getUsername();
           this.profileUrl = commentUsernameInterface.getProfile_url();
           this.content = commentUsernameInterface.getContent();
-          this.like = false; // 수정필요
+          this.like = commentUsernameInterface.getIsLike() != null; // 수정필요
           this.createdAt = commentUsernameInterface.getCreated_at();
      }
      

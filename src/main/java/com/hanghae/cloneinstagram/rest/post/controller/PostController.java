@@ -22,8 +22,6 @@ public class PostController {
          @RequestParam(value="size", defaultValue = "5") int size,
          @RequestParam(value="search", required = false) String search)
     {
-        log.info("controller!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    
         return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts(search, size));
     }
 
