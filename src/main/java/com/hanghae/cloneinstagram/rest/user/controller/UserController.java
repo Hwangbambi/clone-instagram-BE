@@ -1,6 +1,7 @@
 package com.hanghae.cloneinstagram.rest.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.UserStatusCode;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
+@Slf4j
 @Tag(name="user", description = "사용자 API")
 @RestController
 @RequestMapping ("/api/user")
@@ -62,4 +66,14 @@ public class UserController {
      public PrivateResponseBody<LoginResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
           return new PrivateResponseBody(UserStatusCode.USER_LOGIN_SUCCESS, kakaoService.kakaoLogin(code, response));
      }
+//          response.setContentType("application/json");
+//          ObjectMapper objectMapper = new ObjectMapper();
+//          String json = objectMapper.writeValueAsString(loginResponseDto);
+     
+//          response.getWriter().write(json);
+//          return new PrivateResponseBody(UserStatusCode.USER_LOGIN_SUCCESS, kakaoService.kakaoLogin(code, response));
+//          log.info("response.sendRedirect");
+//          response.sendRedirect("localhost:8080/api/posts");
+//          return "redirect:localhost:3000/home";
+
 }

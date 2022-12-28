@@ -38,7 +38,6 @@ public class Post extends Timestamped {
         this.imgUrl = imageUrl;
         this.likes = 0;
         this.deleted = false;
-
     }
 
     public void update() {
@@ -48,5 +47,13 @@ public class Post extends Timestamped {
     public void update(PostRequestDto postRequestDto, String imageUrl) {
         this.content = postRequestDto.getContent();
         this.imgUrl = imageUrl;
+    }
+    
+    public void addLike(){
+        this.likes++;
+    }
+    
+    public void unLike(){
+        this.likes--;
     }
 }
