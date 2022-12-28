@@ -47,6 +47,7 @@ public class PostResponseDto {
     
     public PostResponseDto(PostUsernameInterface postUsernameInterface) {
         this.id = postUsernameInterface.getId();
+        this.username = postUsernameInterface.getUsername();
         this.profileUrl = postUsernameInterface.getProfile_url();
         this.content = postUsernameInterface.getContent();
         this.likes = postUsernameInterface.getLikes();
