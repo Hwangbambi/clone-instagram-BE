@@ -6,6 +6,7 @@ import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.dto.CommentResponseDto;
+import com.hanghae.cloneinstagram.rest.comment.dto.CommentUsernameInterface;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
 import com.hanghae.cloneinstagram.rest.comment.service.CommentService;
 import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
@@ -52,8 +53,19 @@ public class PostService {
                .map(postResponse -> {
                     Long postId = postResponse.getId();
                     // 전제게시글 조회시 댓글은 2개까지만 조회
-                    List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId, user.getId())
-                         .stream().map(CommentResponseDto::new).collect(Collectors.toList());
+//                    List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId, user.getId())
+                    List<CommentUsernameInterface> commentResponseInterList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, user.getId());
+                    int totalCommentSize = commentResponseInterList.size();
+                    postResponse.setCommentsNum(totalCommentSize); // 댓글 전체갯수 set
+                    
+                    int limitSize = 0;
+                    if(totalCommentSize >=2){
+                         limitSize = 2;
+                    }else{
+                         limitSize = totalCommentSize;
+                    }
+                    List<CommentResponseDto> commentResponseDtoList = commentResponseInterList.subList(0,limitSize).stream()
+                         .map(CommentResponseDto::new).collect(Collectors.toList());
                     postResponse.addCommentResponseDtos(commentResponseDtoList);
                     postResponse.setCommentsNum(commentResponseDtoList.size());
                     return postResponse;
