@@ -50,7 +50,7 @@ public class PostResponseDto {
         this.profileUrl = postUsernameInterface.getProfile_url();
         this.content = postUsernameInterface.getContent();
         this.likes = postUsernameInterface.getLikes();
-        this.like = (postUsernameInterface.getIsLike() != null)? true : false; // 수정필요
+        this.like = postUsernameInterface.getIsLike() != null; // 수정필요
         this.imgUrl = postUsernameInterface.getImg_url();
         this.createdAt = postUsernameInterface.getCreated_at();
         this.modifiedAt = postUsernameInterface.getModified_at();
