@@ -6,18 +6,15 @@ import com.hanghae.cloneinstagram.config.errorcode.UserStatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.follow.dto.FollowRecommendListDto;
-import com.hanghae.cloneinstagram.rest.follow.dto.FollowRequestDto;
 import com.hanghae.cloneinstagram.rest.follow.dto.FollowResponseDto;
 import com.hanghae.cloneinstagram.rest.follow.model.Follow;
 import com.hanghae.cloneinstagram.rest.follow.repository.FollowRepository;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import com.hanghae.cloneinstagram.rest.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

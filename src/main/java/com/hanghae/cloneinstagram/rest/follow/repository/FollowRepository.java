@@ -4,6 +4,7 @@ import com.hanghae.cloneinstagram.rest.follow.model.Follow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import software.amazon.awssdk.services.apigateway.model.Op;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +15,4 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     List<Follow> findByUserId(@Param("userId") long userId);
     
     Optional<Follow> findByUserIdAndFollowId(Long id, Long followId);
-    
 }
