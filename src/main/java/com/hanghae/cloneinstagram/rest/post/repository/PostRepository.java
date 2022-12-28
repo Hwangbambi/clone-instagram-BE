@@ -62,7 +62,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                "where post.id = :postId and post.deleted is false and u.deleted is false")
      Optional<PostUsernameInterface> findByIdAndDeletedIsFalseAndByUserOrderByIdDesc(@Param("postId")Long postId, @Param("loggedUserId")Long loggedUserId);
      
-     
      Optional<Post> findByIdAndDeletedIsFalse(Long postId);
      
      // 로그인유저가 좋아요누른 게시글
