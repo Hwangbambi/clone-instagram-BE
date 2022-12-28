@@ -6,7 +6,7 @@ import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.dto.CommentResponseDto;
-import com.hanghae.cloneinstagram.rest.comment.model.Comment;
+import com.hanghae.cloneinstagram.rest.comment.dto.CommentUsernameInterface;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
 import com.hanghae.cloneinstagram.rest.comment.service.CommentService;
 import com.hanghae.cloneinstagram.rest.hashtag.service.HashtagService;
@@ -17,7 +17,6 @@ import com.hanghae.cloneinstagram.rest.user.model.User;
 import com.hanghae.cloneinstagram.rest.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,35 +35,67 @@ public class PostService {
      private final UserService userService;
      private final AwsS3Service awsS3Service;
      
+     // 게시글 전체 불러오기 (팔로우 적용전임)
      @Transactional (readOnly = true)
      public PostListResponseDto.totalResponseDto getPosts(String search, int postIdx) {
+          User user = SecurityUtil.getCurrentUser();
           PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
           List<PostUsernameInterface> postUsernameInterfaceList = new ArrayList<>();
           // search 가 username or hashtag
-          if (search == null || search.equals("")) { // 검색 x
+          if (search == null || search.equals("")) { // 검색 xㄲ
                //작성일 기준 내림차순, deleted is false
-               postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserOrderByIdDesc(postIdx);
+               postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserOrderByIdDesc(postIdx, user.getId());
           } else { // username으로 검색
-               postUsernameInterfaceList = postRepository.findAllByUsernameAndDeletedIsFalseOrderByIdDesc(postIdx, search);
+               postUsernameInterfaceList = postRepository.findAllByUsernameAndDeletedIsFalseOrderByIdDesc(postIdx, search, user.getId());
           }
-          List<PostResponseDto> postResponseDto = postUsernameInterfaceList.stream()
-               .map(PostResponseDto::new)
-               .map(postResponse -> {
-                    Long postId = postResponse.getId();
-                    // 전제게시글 조회시 댓글은 2개까지만 조회
-                    List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDescLimit2(postId)
-                         .stream().map(CommentResponseDto::new).collect(Collectors.toList());
-                    postResponse.addCommentResponseDto(commentResponseDtoList);
-                    postResponse.setCommentsNum(commentResponseDtoList.size());
-                    return postResponse;
-               })
-               .collect(Collectors.toList());
+          List<PostResponseDto> postResponseDto = postImpl2Dto(postUsernameInterfaceList, user.getId());
           
           postListResponseDto.setCurrentSize(postResponseDto.size());
           postListResponseDto.setPostList(postResponseDto);
           return postListResponseDto;
      }
      
+     //로그인한 유저가 좋아요누른 게시글 목록
+     @Transactional (readOnly = true)
+     public PostListResponseDto.totalResponseDto getLikePosts(int size) {
+          // 로그인유저정보
+          User user = SecurityUtil.getCurrentUser();
+          // response Dto
+          PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
+          // 로그인한 유저가 좋아요누른 게시글 목록
+          List<PostUsernameInterface> postUsernameInterfaceList = postRepository.findAllByDeletedIsFalseAndByUserAndUserLikeOrderByIdDesc(size, user.getId());
+          List<PostResponseDto> postResponseDto = postImpl2Dto(postUsernameInterfaceList, user.getId());
+          
+          postListResponseDto.setCurrentSize(postResponseDto.size());
+          postListResponseDto.setPostList(postResponseDto);
+          return postListResponseDto;
+     }
+     
+     // user관련 정보 같이들고온 post게시글리스트 impl >> responseDtoList 로 변환
+     public List<PostResponseDto> postImpl2Dto(List<PostUsernameInterface> postUsernameInterfaceList, Long loggedUserId){
+          return postUsernameInterfaceList.stream()
+               .map(PostResponseDto::new)
+               .map(postResponse -> {
+                    Long postId = postResponse.getId();
+                    List<CommentUsernameInterface> commentResponseInterList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, loggedUserId);
+                    int totalCommentSize = commentResponseInterList.size();
+                    postResponse.setCommentsNum(totalCommentSize); // 댓글 전체갯수 set
+               
+                    int limitSize = 0;
+                    if(totalCommentSize >=2){
+                         limitSize = 2;
+                    }else{
+                         limitSize = totalCommentSize;
+                    }
+                    List<CommentResponseDto> commentResponseDtoList = commentResponseInterList.subList(0,limitSize).stream()
+                         .map(CommentResponseDto::new).collect(Collectors.toList());
+                    postResponse.addCommentResponseDtos(commentResponseDtoList);
+                    return postResponse;
+               })
+               .collect(Collectors.toList());
+     }
+     
+     // 게시글 저장
      @Transactional
      public PostResponseDto.saveResponse savePost(PostRequestDto postRequestDto) {
           User user = SecurityUtil.getCurrentUser();
@@ -89,6 +120,7 @@ public class PostService {
           
      }
      
+     //게시글 삭제
      @Transactional
      public StatusCode deletePost(Long postId) {
           User user = SecurityUtil.getCurrentUser();
@@ -97,11 +129,7 @@ public class PostService {
           Post post = postRepository.findByIdAndDeletedIsFalse(postId).orElseThrow(
                   () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
-          
-          //삭제된 게시글이라면
-          if (post.isDeleted()) {
-               throw new RestApiException(CommonStatusCode.NO_ARTICLE);
-          }
+          // 게시글 삭제시 게시글 좋아요테이블에도 삭제
           
           //작성자 불일치
           if (!postRepository.existsByIdAndUserId(postId, user.getId())) {
@@ -123,6 +151,7 @@ public class PostService {
           return CommonStatusCode.DELETE_POST;
      }
      
+     // 게시글 수정페이지 불러올때 게시글 간단정보 불러오기용
      @Transactional (readOnly = true)
      public PostResponseDto.getOriginalPost getOriginalPost(Long postId) {
           Post post = postRepository.findById(postId).orElseThrow(
@@ -132,26 +161,25 @@ public class PostService {
           return new PostResponseDto.getOriginalPost(post);
      }
      
-     
+     // 게시글 상세조회 (팔로우 적용전)
      @Transactional (readOnly = true)
      public PostResponseDto getPost(Long postId) {
-          Post post = postRepository.findById(postId).orElseThrow(
+          // 게시글 아이디로 찾기 (게시글 삭제여부, 작성자 탈퇴여부 확인, username, profileUrl같이 들고오기)
+          User user = SecurityUtil.getCurrentUser();
+          PostUsernameInterface postInterface = postRepository.findByIdAndDeletedIsFalseAndByUserOrderByIdDesc(postId, user.getId()).orElseThrow(
                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
+          PostResponseDto postResponseDto = new PostResponseDto(postInterface);
           
-          //삭제된 게시글이라면
-          if (post.isDeleted()) {
-               throw new RestApiException(CommonStatusCode.NO_ARTICLE);
-          }
+          List<CommentResponseDto> commentResponseDtoList = commentRepository.findByIdAndDeletedIsFalseOrderByCreatedAtDesc(postId, user.getId())
+                                                                 .stream().map(CommentResponseDto::new).collect(Collectors.toList());
+          postResponseDto.addCommentResponseDtos(commentResponseDtoList); // 댓글리스트 추가
+          postResponseDto.setCommentsNum(commentResponseDtoList.size()); // 댓글개수 추가
           
-          List<Comment> commentList = commentService.getCommentList(postId);
-          
-          //작성자 profileUrl 조회
-          String profileUrl = userService.getProfileUrl(post.getUserId());
-          
-          return new PostResponseDto(post, commentList, profileUrl);
+          return postResponseDto;
      }
      
+     // 게시글 수정
      @Transactional
      public StatusCode updatePost(Long postId, PostRequestDto postRequestDto) {
           User user = SecurityUtil.getCurrentUser();
@@ -193,4 +221,6 @@ public class PostService {
           
           return CommonStatusCode.UPDATE_POST;
      }
+     
+     
 }

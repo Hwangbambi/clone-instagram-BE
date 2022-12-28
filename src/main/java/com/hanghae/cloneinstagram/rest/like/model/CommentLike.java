@@ -7,27 +7,30 @@ import lombok.RequiredArgsConstructor;
 import javax.persistence.*;
 import java.util.function.Supplier;
 
-@Entity (name = "post_like")
+@Entity (name = "comment_like")
 @RequiredArgsConstructor
 @Getter
-@Table(indexes = @Index(name = "idx__postId", columnList = "postId"))
-public class PostLike extends Timestamped implements Supplier<PostLike> {
-
+@Table(indexes = @Index(name = "idx__comment_id", columnList = "commentId"))
+public class CommentLike extends Timestamped implements Supplier<CommentLike> {
+     
      @Id
-     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @GeneratedValue (strategy = GenerationType.IDENTITY)
      private Long id;
+     
      @Column(nullable = false)
-     private Long postId;
+     private Long commentId;
+     
      @Column(nullable = false)
      private Long userId;
-
-     public PostLike(Long postId, Long userId) {
-          this.postId = postId;
+     
+     public CommentLike(Long commentId, Long userId) {
+          this.commentId = commentId;
           this.userId = userId;
      }
-
+     
      @Override
-     public PostLike get() {
+     public CommentLike get() {
           return null;
      }
+     
 }

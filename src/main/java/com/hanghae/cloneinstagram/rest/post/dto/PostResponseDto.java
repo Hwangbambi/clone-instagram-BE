@@ -41,16 +41,17 @@ public class PostResponseDto {
         this.commentsNum = commentList.size();
 //        this.commentList = commentList;
     }
-    public void addCommentResponseDto(List<CommentResponseDto> commentResponseDtoList){
+    public void addCommentResponseDtos(List<CommentResponseDto> commentResponseDtoList){
         this.commentResponseList = commentResponseDtoList;
     }
     
     public PostResponseDto(PostUsernameInterface postUsernameInterface) {
         this.id = postUsernameInterface.getId();
+        this.username = postUsernameInterface.getUsername();
         this.profileUrl = postUsernameInterface.getProfile_url();
         this.content = postUsernameInterface.getContent();
         this.likes = postUsernameInterface.getLikes();
-        this.like = false; // 수정필요
+        this.like = postUsernameInterface.getIsLike() != null; // 수정필요
         this.imgUrl = postUsernameInterface.getImg_url();
         this.createdAt = postUsernameInterface.getCreated_at();
         this.modifiedAt = postUsernameInterface.getModified_at();

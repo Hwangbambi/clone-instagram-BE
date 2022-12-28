@@ -11,4 +11,5 @@ public interface PostUsernameInterface {
      int getLikes();
      LocalDateTime getCreated_at();
      LocalDateTime getModified_at();
+     Long getIsLike();
 }

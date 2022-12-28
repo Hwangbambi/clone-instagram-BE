@@ -8,8 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface LikeRepository extends JpaRepository<PostLike, Long> {
+import java.util.Optional;
 
+public interface LikePostRepository extends JpaRepository<PostLike, Long> {
+     Optional<PostLike> findByUserIdAndPostId(Long postId, Long userId);
     @Query(value = "select u.username, u.profile_url from post_like pl join users u on pl.user_id = u.id\n" +
             "where u.deleted is false and pl.post_id = :postId", nativeQuery = true)
     List<LikePostUserInterface> findByPostId(@Param("postId") long postId);

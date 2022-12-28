@@ -2,20 +2,25 @@ package com.hanghae.cloneinstagram.rest.like.service;
 
 import com.hanghae.cloneinstagram.config.dto.PrivateResponseBody;
 import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
+import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
+import com.hanghae.cloneinstagram.rest.comment.model.Comment;
+import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
+import com.hanghae.cloneinstagram.rest.like.model.CommentLike;
+import com.hanghae.cloneinstagram.rest.like.model.PostLike;
+import com.hanghae.cloneinstagram.rest.like.repository.LikeCommentRepository;
+import com.hanghae.cloneinstagram.rest.like.repository.LikePostRepository;
 import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
 import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
-import com.hanghae.cloneinstagram.rest.like.model.PostLike;
-import com.hanghae.cloneinstagram.rest.like.repository.LikeRepository;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
 import com.hanghae.cloneinstagram.rest.post.repository.PostRepository;
 import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.workdocs.model.CommentStatusType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,36 +28,53 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
+     private final CommentRepository commentRepository;
      
      private final PostRepository postRepository;
-     private final LikeRepository likeRepository;
+     private final LikePostRepository likePostRepository;
+     private final LikeCommentRepository likeCommentRepository;
      
+     // 게시글 좋아요
      @Transactional
-     public PrivateResponseBody PostLike(Long postId) {
+     public StatusCode PostLike(Long postId) {
           User user = SecurityUtil.getCurrentUser();
           Post post = postRepository.findById(postId).orElseThrow(
                () -> new RestApiException(CommonStatusCode.NO_ARTICLE)
           );
+          
+          // 로그인한 유저의 아이디, 게시글의 아이디 로 검색
+          PostLike postLike = likePostRepository.findByUserIdAndPostId(user.getId(), post.getId()).orElseGet(new PostLike());
+          if(postLike != null){ // 좋아요 눌러져있을때
+               post.unLike(); // 게시글 좋아요수 --
+               likePostRepository.delete(postLike); // 좋아요 테이블에서 삭제
+               return CommonStatusCode.POST_LIKE_CANCEL;
+          }else{
+               PostLike newPostLike = new PostLike(post.getId(), user.getId());
+               post.addLike(); // 게시글 좋아요수 ++
+               likePostRepository.save(newPostLike);
+               return CommonStatusCode.POST_LIKE;
+          }
+     }
      
-//          Likes like = likeRepository.findByUserIdAndPostId(user.getId(), post.getId()).orElseGet(new Likes());
-//          if(like == null){//좋아요최초로누를때
-//               post.like();
-//               Likes likes = new Likes(user, post);
-//               likeRepository.save(likes);
-//               return new ResponseEntity<>(new PrivateResponseBody(CommonStatusCode.POST_LIKE, new LikeResponseDto(likes.isLike(), post.getLikes())), HttpStatus.OK);
-//          } else {
-//               if(like.isLike()){//좋아요눌려있을때취소
-//                    post.likeCancel();
-//                    likeRepository.deleteById(like.getId());
-//                    return new ResponseEntity<>(new PrivateResponseBody(CommonStatusCode.POST_LIKE_CANCEL, new LikeResponseDto(false, post.getLikes())), HttpStatus.OK);
-//               } else{//안눌려있을때다시좋아요
-//                    post.like();
-//                    Likes likes = new Likes(user, post);
-//                    likeRepository.save(likes);
-//                    return new ResponseEntity<>(new PrivateResponseBody(CommonStatusCode.POST_LIKE, new LikeResponseDto(likes.isLike(), post.getLikes())), HttpStatus.OK);
-//               }
-//          }
-          return null;
+     // 댓글 좋아요
+     @Transactional
+     public StatusCode CommentLike(Long commentId) {
+          User user = SecurityUtil.getCurrentUser();
+          Comment comment = commentRepository.findById(commentId).orElseThrow(
+               () -> new RestApiException(CommonStatusCode.NO_COMMENT)
+          );
+          // 로그인한 유저의 아이디, 코멘트 아이디 로 검색
+          CommentLike commentLike = likeCommentRepository.findByUserIdAndCommentId(user.getId(), comment.getId()).orElseGet(new CommentLike());
+          if(commentLike != null){ // 이미 좋아요 누른상태
+               comment.unLike();
+               likeCommentRepository.delete(commentLike);
+               return CommonStatusCode.COMMENT_LIKE_CANCEL;
+          }else {
+               CommentLike newCommentLike = new CommentLike(comment.getId(), user.getId());
+               comment.addLike();
+               likeCommentRepository.save(newCommentLike);
+               return CommonStatusCode.COMMENT_LIKE;
+          }
      }
      
      // 해당 게시글 좋아요 누른 사람들 리스트
@@ -63,7 +85,7 @@ public class LikeService {
           // 리스트를 보내주기
           List<LikePostUsersResponseDto> likePostUsersResponseDtos = new ArrayList<>();
 
-          List<LikePostUserInterface> likePostUserInterfaces = likeRepository.findByPostId(postId);
+          List<LikePostUserInterface> likePostUserInterfaces = likePostRepository.findByPostId(postId);
 
           for (LikePostUserInterface likePostUser : likePostUserInterfaces) {
                //좋아요 누른 유저 팔로우 유무 확인 - follow 구현 후 추후 추가
@@ -73,4 +95,5 @@ public class LikeService {
           }
           return likePostUsersResponseDtos;
      }
+     
 }

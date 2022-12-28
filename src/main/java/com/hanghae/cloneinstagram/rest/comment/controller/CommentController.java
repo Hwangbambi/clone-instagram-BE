@@ -25,4 +25,10 @@ public class CommentController {
           @RequestBody CommentRequestDto requestDto){
           return new PrivateResponseBody(CommonStatusCode.OK, commentService.saveComment(postId, requestDto));
      }
+     
+     @Operation (summary = "댓글삭제", description = "commentId 댓글 삭제")
+     @DeleteMapping("/comments/{commentId}")
+     public PrivateResponseBody deleteComment(@PathVariable Long commentId){
+          return new PrivateResponseBody(commentService.deleteComment(commentId));
+     }
 }

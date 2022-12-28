@@ -6,8 +6,10 @@ import com.hanghae.cloneinstagram.rest.post.dto.PostRequestDto;
 import com.hanghae.cloneinstagram.rest.post.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -27,6 +29,14 @@ public class PostController {
     @GetMapping("/posts/{postId}")
     public PrivateResponseBody getPost(@PathVariable Long postId) {
         return new PrivateResponseBody(CommonStatusCode.OK,postService.getPost(postId));
+    }
+    
+    @ApiOperation(value = "좋아요한 게시글 전체 조회")
+    @GetMapping("/posts/likes")
+    public PrivateResponseBody getLikePosts(
+         @RequestParam(value="size", defaultValue = "5") int size)
+    {
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getLikePosts(size));
     }
 
     @ApiOperation(value = "게시글 작성 및 파일 업로드")
