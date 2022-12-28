@@ -1,5 +1,7 @@
 package com.hanghae.cloneinstagram.rest.follow.service;
 
+import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
+import com.hanghae.cloneinstagram.config.errorcode.StatusCode;
 import com.hanghae.cloneinstagram.config.errorcode.UserStatusCode;
 import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class FollowService {
         return followRecommendListDtos;
     }
 
-    public FollowResponseDto following(Long followId) {
+    public StatusCode following(Long followId) {
         User user = SecurityUtil.getCurrentUser();
 
         //followId 회원 탈퇴 유무 확인
@@ -48,10 +51,15 @@ public class FollowService {
             throw new RestApiException(UserStatusCode.DELETE_USER);
         }
 
-        FollowRequestDto followRequestDto = new FollowRequestDto(user.getId(), followId);
+        //팔로우 중복 클릭시 언팔로우
+        Optional<Follow> follow = followRepository.findByUserIdAndFollowId(user.getId(), followId);
 
-        Follow follow = followRepository.saveAndFlush(new Follow(followRequestDto));
-
-        return new FollowResponseDto();
+        if (!follow.isPresent()){
+            followRepository.saveAndFlush(new Follow(new FollowRequestDto(user.getId(), followId)));
+            return CommonStatusCode.FOLLOW_USER;
+        } else {
+            followRepository.delete(follow.get());
+            return CommonStatusCode.UNFOLLOW_USER;
+        }
     }
 }

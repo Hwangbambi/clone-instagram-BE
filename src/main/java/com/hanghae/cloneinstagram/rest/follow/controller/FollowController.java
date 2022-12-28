@@ -25,7 +25,7 @@ public class FollowController {
     @Operation(summary = "팔로우", description = "회원 팔로우 하기")
     @PostMapping("/follows/{followId}")
     public PrivateResponseBody following(@PathVariable Long followId) {
-        return new PrivateResponseBody(CommonStatusCode.FOLLOW_USER, followService.following(followId));
+        return new PrivateResponseBody(followService.following(followId));
     }
     
 }
