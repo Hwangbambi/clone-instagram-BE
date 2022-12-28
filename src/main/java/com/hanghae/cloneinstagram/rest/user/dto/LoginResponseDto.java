@@ -13,7 +13,7 @@ public class LoginResponseDto {
      @Schema (description = "유저명")
      private String username;
      
-     @Schema(description = "비밀번호")
+     @Schema(description = "프로필URL")
      private String profileUrl;
      
      @JsonInclude (JsonInclude.Include.NON_EMPTY)
