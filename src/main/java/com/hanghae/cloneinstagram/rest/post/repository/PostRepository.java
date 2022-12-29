@@ -75,4 +75,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                "order by id desc limit :size" )
      List<PostUsernameInterface> findAllByDeletedIsFalseAndByUserAndUserLikeOrderByIdDesc(@Param("size")int size,  @Param("loggedUserId")Long loggedUserId);
      
+     // 로그인유저가 팔로우한 사람들 게시글 (나의좋아요유무도 같이확인)
+     @Query (
+          nativeQuery = true,
+          value = "select  p.*, u.username, u.profile_url, pl.user_id as isLike  " +
+               "from post p " +
+               "join follow f on f.user_id= :loggedUserId and p.user_id = f.follow_id " + // 로그인유저가 팔로우한 사람들
+               "left join post_like pl on p.id = pl.post_id and pl.user_id=:loggedUserId " + // 로그인유저의 게시글 좋아요유무
+               "join users u on p.user_id = u.id " + // 게시글 작성자 유저정보 용
+               "where p.deleted is false and u.deleted is false " + // 삭제안된 게시글, 탈퇴안한사람의 게시글
+               "order by p.id desc limit :size ") // 게시글 id이름 내림차순
+     List<PostUsernameInterface> findByFollowedUser(@Param("size")int size,  @Param("loggedUserId")Long loggedUserId);
+     
 }
