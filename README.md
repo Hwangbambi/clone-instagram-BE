@@ -1,7 +1,5 @@
 ### 2조 클론 프로젝트(SA)
 
-https://foremost-tellurium-295.notion.site/4-SA-37c3447f61a24e1a92fa8c5a060fa1e7
-
 # <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" width="35px"> Instagram (BE) 
 
 인스타그램과 동일한 기능 구현
