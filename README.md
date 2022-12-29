@@ -1,25 +1,28 @@
-### 4조 미니 프로젝트(SA)
+### 2조 클론 프로젝트(SA)
 
 https://foremost-tellurium-295.notion.site/4-SA-37c3447f61a24e1a92fa8c5a060fa1e7
 
-# 🎮Gammini(BE)🎮
-### 내가 해본 게임 중 재미있던 게임들을 사진과 글로 추천, 설명해주는 사이트
-![gammini](https://user-images.githubusercontent.com/108880977/209127979-f73b58c7-04cc-434a-a8b3-0dfae04129a3.png)
+# <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" width="35px"> Instagram (BE) 
+
+인스타그램과 동일한 기능 구현
 
 
 ---
 
- ## 🧩주요기능
+ ## ⭐주요기능
  -  회원가입, 로그인 기능 (security 적용)
- -  회원탈퇴 기능(soft delete, 탈퇴시 nickname 변경)
- -  게임추천하여 글 작성, 이미지 업로드하기, 수정, 삭제(S3, SoftDelete적용)
- -  한 페이지에 게시글 8개만 보이도록 페이징 처리, 검색기능 구현
- -  게시글 좋아요, 좋아요 취소(게시글별 좋아요 갯수, 로그인 유저별 게시글 좋아요 유무 표현)
- -  게시글에 comment 작성, 삭제 기능
- -  마이페이지에서 프로필, 닉네임 변경
- -  마이페이지에서 내가 좋아요한 게시글, 내가 작성한 게시글 조회
+ -  카카오 API 로그인 기능 <br><br>
+ -  게시글 작성, 이미지 첨부, 해시태그 추가, 수정, 삭제 (S3, SoftDelete 적용)
+ -  전체 게시글 조회시 최신순으로 5개씩 보이도록 처리, 무한 스크롤 기능 구현
+ -  유저 이름, 해시태그 검색 기능 구현
+ -  게시글 좋아요, 좋아요 취소 (게시글별 좋아요 갯수 및 최초 좋아요 한 유저의 이름 표현)
+ -  게시글 좋아요 갯수 클릭시 좋아요를 누른 유저 목록 조회 및 로그인한 유저의 팔로잉 유무 확인
+ -  게시글에 댓글 작성, 삭제 (SoftDelete 적용) 기능 <br><br>
+ -  댓글 좋아요, 좋아요 취소 <br><br>
+ -  로그인한 유저가 팔로우 하지 않은 다른 유저 추천 목록 기능 구현 (게시글 작성 갯수가 많은 유저로 정렬, 최대 20명까지 조회)
+ -  유저 팔로우, 언팔로우 
  
- ## 🧩API 명세서 [LINK](https://www.notion.so/5c1825c4d4374345a373db15c88a3a68?v=ab6a0dff9e1f435187ca5879724fae9f)
+ ## ⭐API 명세서 [LINK](http://localhost:8080/swagger-ui/index.html)
  ---
  ##  💉트러블 슈팅💉
 #### 1. 파일업로드
@@ -52,15 +55,15 @@ https://foremost-tellurium-295.notion.site/4-SA-37c3447f61a24e1a92fa8c5a060fa1e7
 ![아마존 AWS](https://user-images.githubusercontent.com/108880977/209103421-1cf57ef4-8620-4932-8704-60d0ec14ed1f.svg)
 ![EC22](https://user-images.githubusercontent.com/108880977/209104209-b04b40b7-a847-4263-aeb8-de19bc7fa8d9.svg)
 
- - 🔑프론트엔드 https://github.com/HanghaeGamemini/gmini_front
+ - 🔑프론트엔드 https://github.com/clone-instagram/clone-instagram-fe3
  ---
  ### Member 
- BE 😶장영주, 😶최재하,😶 김수예
+ BE 😶장영주, 😶황수정
  
  
- FE 😀허정은, 😀한예진
+ FE 😀박선영, 😀정상욱
  
  
  - FE 프론트엔드 깃허브로 이동
- https://github.com/HanghaeGamemini/gmini_front
+ https://github.com/clone-instagram/clone-instagram-fe3
  
