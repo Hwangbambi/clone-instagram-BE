@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,18 +26,21 @@ public class FollowService {
      
      //회원 팔로우
      //팔로우 추천 목록 조회 - 내가 팔로우 하지 않는 유저 (게시글 많은 순서)
+     @Transactional(readOnly = true)
      public FollowRecommendListDto getFollows() {
+          // 현재 로그인한 유저
           User user = SecurityUtil.getCurrentUser();
           
-          FollowRecommendListDto followRecommendListDtos = new FollowRecommendListDto();
           
           //follow 테이블에서 user.getId() 로 조회한 결과, 나오는 followId 는 제외하고 리턴?, 게시글 많은 순으로 조회
-          List<Follow> followList = followRepository.findByUserId(user.getId());
+          List<FollowResponseDto.FollowRecomResponseDto> followList = followRepository.findByUserId(user.getId()).stream()
+                                                  .map(FollowResponseDto.FollowRecomResponseDto::new)
+                                                  .collect(Collectors.toList());
           
-          
-          return followRecommendListDtos;
+          return new FollowRecommendListDto(followList);
      }
      
+     // 상대 userId로 팔로우 , 언팔로우
      @Transactional
      public PrivateResponseBody<FollowResponseDto> following(Long followId) {
           User user = SecurityUtil.getCurrentUser();
