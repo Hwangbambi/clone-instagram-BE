@@ -21,7 +21,7 @@ https://foremost-tellurium-295.notion.site/4-SA-37c3447f61a24e1a92fa8c5a060fa1e7
  -  댓글 좋아요, 좋아요 취소 <br><br>
  -  로그인한 유저가 팔로우 하지 않은 다른 유저 추천 목록 기능 구현 (게시글 작성 갯수가 많은 유저로 정렬, 최대 20명까지 조회)
  -  유저 팔로우, 언팔로우 
- 
+ <br><br>
  ## ⭐API 명세서 [LINK](http://localhost:8080/swagger-ui/index.html)
  ---
  ##  💉트러블 슈팅💉
