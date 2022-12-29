@@ -59,10 +59,16 @@ public class CommentService {
      public StatusCode deleteComment(Long commentId) {
           // 토큰으로 유저(작성자) 가져오기
           User user = SecurityUtil.getCurrentUser();
-          // 댓글id 작성자와 로그인유저 일치 확인, 댓글 존재여부도 확인
-          Comment comment = commentRepository.findByIdAndUserId(commentId, user.getId()).orElseThrow(
+          // 댓글 존재여부 확인
+          Comment comment = commentRepository.findById(commentId).orElseThrow(
                () -> new RestApiException(CommonStatusCode.NO_COMMENT)
           );
+
+          // 댓글 작성자와 로그인 유저 일치 확인
+          if (!user.getId().equals(comment.getUserId())){
+               throw new RestApiException(CommonStatusCode.INVALID_USER);
+          }
+
           // 댓글 삭제
           commentRepository.delete(comment);
           return CommonStatusCode.DELETE_COMMENT;
