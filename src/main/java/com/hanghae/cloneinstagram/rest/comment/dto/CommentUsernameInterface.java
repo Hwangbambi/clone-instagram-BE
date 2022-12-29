@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public interface CommentUsernameInterface {
      Long getId();
      String getProfile_url();
+     Long getUser_id();
      String getContent();
      String getUsername();
      LocalDateTime getCreated_at();

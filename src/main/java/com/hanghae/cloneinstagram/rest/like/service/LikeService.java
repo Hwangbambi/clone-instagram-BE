@@ -6,8 +6,7 @@ import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import com.hanghae.cloneinstagram.config.util.SecurityUtil;
 import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.comment.repository.CommentRepository;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUserInterface;
-import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDto;
+import com.hanghae.cloneinstagram.rest.like.dto.LikePostUsersResponseDtoList;
 import com.hanghae.cloneinstagram.rest.like.model.CommentLike;
 import com.hanghae.cloneinstagram.rest.like.model.PostLike;
 import com.hanghae.cloneinstagram.rest.like.repository.LikeCommentRepository;
@@ -76,19 +75,18 @@ public class LikeService {
      
      // 해당 게시글 좋아요 누른 사람들 리스트
      @Transactional (readOnly = true)
-     public List<LikePostUsersResponseDto> getPostLikes(Long postId) {
+     public LikePostUsersResponseDtoList getPostLikes(Long postId) {
           User loggedUser = SecurityUtil.getCurrentUser();
           // 리스트를 보내주기
-          
           // 해당게시글의 좋아요리스트 (게시글 삭제시 관련좋아요는 delete됨)
           // 내가 팔로우 한지 안한지 도 보내주기. isFollow : true, false
           // 팔로우 한사람이 위쪽
-          List<LikePostUserInterface> likePostUserInterfaces = likePostRepository.findByPostId(postId, loggedUser.getId());
-          List<LikePostUsersResponseDto> likePostUsersResponseDtos = likePostUserInterfaces.stream()
-                                        .map(LikePostUsersResponseDto::new)
+          List<LikePostUsersResponseDtoList.LikePostUsersResponseDto> likePostUsersResponseDtos = likePostRepository.findByPostId(postId, loggedUser.getId())
+                                        .stream()
+                                        .map(LikePostUsersResponseDtoList.LikePostUsersResponseDto::new)
                                         .collect(Collectors.toList());
           
-          return likePostUsersResponseDtos;
+          return new LikePostUsersResponseDtoList(likePostUsersResponseDtos);
      }
      
 }
