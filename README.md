@@ -21,6 +21,10 @@
  -  유저 팔로우, 언팔로우 
  <br><br>
  ## ⭐API 명세서 [LINK](https://descriptive-handbell-23e.notion.site/1674fd9af2fa4342933f7f0aace9f809?v=232c43f95d5e4df8ad00a649b1c3fe63)
+
+ ## ⭐ERD
+ <img width="784" alt="스크린샷_20221229_051305" src="https://user-images.githubusercontent.com/100077017/209923194-d0a86b53-1531-46ee-9f98-759195864b82.png">
+
  ---
  ##  💉트러블 슈팅💉
 #### 1. 파일업로드
