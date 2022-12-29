@@ -73,6 +73,23 @@ public class PostService {
           return postListResponseDto;
      }
      
+     // 나의 팔로우한 사람들의 게시글 목록
+     @Transactional (readOnly = true)
+     public PostListResponseDto.totalResponseDto getFollowPosts(int size) {
+          // 로그인유저정보
+          User user = SecurityUtil.getCurrentUser();
+          // response Dto
+          PostListResponseDto.totalResponseDto postListResponseDto = new PostListResponseDto.totalResponseDto();
+     
+          // 로그인한 유저가 팔로우중인 사람들의 게시글 목록
+          List<PostUsernameInterface> postUsernameInterfaceList = postRepository.findByFollowedUser(size, user.getId());
+          List<PostResponseDto> postResponseDto = postImpl2Dto(postUsernameInterfaceList, user.getId());
+     
+          postListResponseDto.setCurrentSize(postResponseDto.size());
+          postListResponseDto.setPostList(postResponseDto);
+          return postListResponseDto;
+          
+     }
      // user관련 정보 같이들고온 post게시글리스트 impl >> responseDtoList 로 변환
      public List<PostResponseDto> postImpl2Dto(List<PostUsernameInterface> postUsernameInterfaceList, Long loggedUserId){
           return postUsernameInterfaceList.stream()
@@ -223,6 +240,7 @@ public class PostService {
           
           return CommonStatusCode.UPDATE_POST;
      }
+     
      
      
 }
