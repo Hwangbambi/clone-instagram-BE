@@ -21,7 +21,7 @@ public interface LikePostRepository extends JpaRepository<PostLike, Long> {
                "from (select u.username, u.profile_url, u.id as id " +
                     "from post_like pl join users u on pl.user_id = u.id " +
                     "where pl.post_id = :postId and u.deleted is false) a " + // 해당게시글의 좋아요한 유저들의 유저정보 들고오기용
-               "left join follow on follow.user_id = :loggedUserId and a.id = follow.follow_id " +
+               "left join follow on follow.user_id = :loggedUserId and a.id = follow.follow_id " + // 로그인유저가 팔로우하고있고, 게시글좋아요한유저들을 팔로우한거 (다른사람이팔로우한 사람도 뜨는가? ㅇㅇ)
                "order by Follow desc, a.id")
      List<LikePostUserInterface> findByPostId(@Param ("postId")Long postId, @Param("loggedUserId")Long loggedUserId);
      
