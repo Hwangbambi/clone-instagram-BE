@@ -2,6 +2,9 @@ package com.hanghae.cloneinstagram.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.cloneinstagram.config.dto.ErrorResponseDto;
+import com.hanghae.cloneinstagram.config.errorcode.CommonStatusCode;
+import com.hanghae.cloneinstagram.config.errorcode.UserStatusCode;
+import com.hanghae.cloneinstagram.config.exception.RestApiException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

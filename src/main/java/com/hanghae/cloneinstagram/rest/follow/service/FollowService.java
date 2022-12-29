@@ -47,7 +47,7 @@ public class FollowService {
           
           //followId 회원 탈퇴 유무 확인
           boolean followUser = userRepository.existsByIdAndDeletedIsFalse(followId);
-          if (!followUser) throw new RestApiException(UserStatusCode.DELETE_USER);
+          if (!followUser) throw new RestApiException(UserStatusCode.NO_USER);
           
           // 기존에 팔로우한 사람인가?
           Follow originFollow = followRepository.findByUserIdAndFollowId(user.getId(), followId).orElse(null);
