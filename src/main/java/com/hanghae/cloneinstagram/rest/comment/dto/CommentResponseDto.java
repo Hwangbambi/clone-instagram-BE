@@ -16,6 +16,9 @@ public class CommentResponseDto {
      @Schema(description = "댓글작성 유저명")
      private String username;
      
+     @Schema(description = "댓글작성 유저아이디")
+     private Long userId;
+     
      @Schema(description = "댓글작성 유저 프로필url")
      private String profileUrl;
      
@@ -37,6 +40,7 @@ public class CommentResponseDto {
      public CommentResponseDto(CommentUsernameInterface commentUsernameInterface) {
           this.id = commentUsernameInterface.getId();
           this.username = commentUsernameInterface.getUsername();
+          this.userId = commentUsernameInterface.getUser_id();
           this.profileUrl = commentUsernameInterface.getProfile_url();
           this.content = commentUsernameInterface.getContent();
           this.like = commentUsernameInterface.getIsLike() != null; // 수정필요

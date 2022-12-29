@@ -17,7 +17,7 @@ import java.util.List;
 public class PostResponseDto {
     private Long id;
     private String profileUrl;
-    
+    private Long userId;
     private String username;
     private String content;
     private String imgUrl;
@@ -48,6 +48,7 @@ public class PostResponseDto {
     public PostResponseDto(PostUsernameInterface postUsernameInterface) {
         this.id = postUsernameInterface.getId();
         this.username = postUsernameInterface.getUsername();
+        this.userId = postUsernameInterface.getUser_id();
         this.profileUrl = postUsernameInterface.getProfile_url();
         this.content = postUsernameInterface.getContent();
         this.likes = postUsernameInterface.getLikes();

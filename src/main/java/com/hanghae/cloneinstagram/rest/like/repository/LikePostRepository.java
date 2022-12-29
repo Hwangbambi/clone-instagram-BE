@@ -17,7 +17,7 @@ public interface LikePostRepository extends JpaRepository<PostLike, Long> {
      // 내가 팔로우 한지 안한지 도 보내주기. isFollow : true, false
      // 팔로우 한사람이 위쪽, 탈퇴한 유저는 빼고
      @Query (nativeQuery = true,
-          value = "select a.username, a.profile_url, a.id, follow.user_id as follow " +
+          value = "select a.username, a.profile_url, a.id as user_id, follow.user_id as follow " +
                "from (select u.username, u.profile_url, u.id as id " +
                     "from post_like pl join users u on pl.user_id = u.id " +
                     "where pl.post_id = :postId and u.deleted is false) a " + // 해당게시글의 좋아요한 유저들의 유저정보 들고오기용
