@@ -69,6 +69,6 @@ public class PostController {
     @PatchMapping("/posts/{postId}")
     public PrivateResponseBody updatePost(@PathVariable Long postId,
                                           @ModelAttribute PostRequestDto postRequestDto) {
-        return new PrivateResponseBody(postService.updatePost(postId,postRequestDto));
+        return new PrivateResponseBody(CommonStatusCode.UPDATE_POST, postService.updatePost(postId,postRequestDto));
     }
 }
