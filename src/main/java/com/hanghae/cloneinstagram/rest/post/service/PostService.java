@@ -200,7 +200,7 @@ public class PostService {
      
      // 게시글 수정
      @Transactional
-     public StatusCode updatePost(Long postId, PostRequestDto postRequestDto) {
+     public PostResponseDto.updatePost updatePost(Long postId, PostRequestDto postRequestDto) {
           User user = SecurityUtil.getCurrentUser();
           
           Post post = postRepository.findById(postId).orElseThrow(
@@ -238,7 +238,7 @@ public class PostService {
           
           post.softDelete(postRequestDto, imageUrl);
           
-          return CommonStatusCode.UPDATE_POST;
+          return new PostResponseDto.updatePost(user,postId,postRequestDto,imageUrl);
      }
      
      
