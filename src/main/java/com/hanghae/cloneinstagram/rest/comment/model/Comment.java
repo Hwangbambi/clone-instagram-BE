@@ -30,5 +30,13 @@ public class Comment extends Timestamped {
 
     @Column
     private int likes;
+    
+    public void addLike(){
+        this.likes++;
+    }
+    
+    public void unLike(){
+        this.likes--;
+    }
 
 }

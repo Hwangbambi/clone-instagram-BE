@@ -15,6 +15,7 @@ public enum UserStatusCode implements StatusCode {
      USER_SIGNUP_SUCCESS(true, "회원가입 성공", HttpStatus.OK.value()),
      USER_SIGNUP_FAIL("회원가입 실패", HttpStatus.BAD_REQUEST.value()),
      USER_LOGIN_SUCCESS(true, "로그인 성공", HttpStatus.OK.value()),
+     CHANGE_PROFILEIMG_SUCCESS(true, "프로필 변경 성공", HttpStatus.OK.value()),
 
      ONLY_FOR_ADMIN("관리자만 가능합니다.", HttpStatus.BAD_REQUEST.value()),
      WRONG_USERNAME_PATTERN("유저명은 최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)로 구성되어야 합니다.", HttpStatus.BAD_REQUEST.value()),

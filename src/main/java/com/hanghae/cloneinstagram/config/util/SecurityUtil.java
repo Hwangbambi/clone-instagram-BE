@@ -37,7 +37,7 @@ public class SecurityUtil {
                UserDetailsImpl springSecurityUser = (UserDetailsImpl) authentication.getPrincipal();
                return springSecurityUser.getUser();
           }else {
-               return null;
+               throw new RestApiException(UserStatusCode.NOT_FOUND_AUTHORIZATION_IN_SECURITY_CONTEXT);
           }
      }
 }

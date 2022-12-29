@@ -3,6 +3,7 @@ package com.hanghae.cloneinstagram.rest.post.dto;
 import com.hanghae.cloneinstagram.rest.comment.dto.CommentResponseDto;
 import com.hanghae.cloneinstagram.rest.comment.model.Comment;
 import com.hanghae.cloneinstagram.rest.post.model.Post;
+import com.hanghae.cloneinstagram.rest.user.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.util.List;
 public class PostResponseDto {
     private Long id;
     private String profileUrl;
-    
+    private Long userId;
     private String username;
     private String content;
     private String imgUrl;
@@ -28,29 +29,18 @@ public class PostResponseDto {
     private int commentsNum;
     private List<CommentResponseDto> commentResponseList = new ArrayList<>();
 
-    public PostResponseDto(Post post, List<Comment> commentList, String profileUrl) {
-        this.id = post.getId();
-        // username 채워야함
-        this.profileUrl = profileUrl;
-        this.content = post.getContent();
-        this.likes = post.getLikes();
-        this.like = false; // 수정필요
-        this.imgUrl = post.getImgUrl();
-        this.createdAt = post.getCreatedAt();
-        this.modifiedAt = post.getModifiedAt();
-        this.commentsNum = commentList.size();
-//        this.commentList = commentList;
-    }
-    public void addCommentResponseDto(List<CommentResponseDto> commentResponseDtoList){
+    public void addCommentResponseDtos(List<CommentResponseDto> commentResponseDtoList){
         this.commentResponseList = commentResponseDtoList;
     }
     
     public PostResponseDto(PostUsernameInterface postUsernameInterface) {
         this.id = postUsernameInterface.getId();
+        this.username = postUsernameInterface.getUsername();
+        this.userId = postUsernameInterface.getUser_id();
         this.profileUrl = postUsernameInterface.getProfile_url();
         this.content = postUsernameInterface.getContent();
         this.likes = postUsernameInterface.getLikes();
-        this.like = false; // 수정필요
+        this.like = postUsernameInterface.getIsLike() != null; // 수정필요
         this.imgUrl = postUsernameInterface.getImg_url();
         this.createdAt = postUsernameInterface.getCreated_at();
         this.modifiedAt = postUsernameInterface.getModified_at();
@@ -84,4 +74,18 @@ public class PostResponseDto {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    public static class updatePost {
+        private Long id;
+        private String username;
+        private String content;
+        private String imgUrl;
+        public updatePost(User user, Long postId, PostRequestDto postRequestDto, String imageUrl) {
+            this.id = postId;
+            this.username = user.getUsername();
+            this.content = postRequestDto.getContent();
+            this.imgUrl = imageUrl;
+        }
+    }
 }
