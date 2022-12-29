@@ -24,6 +24,14 @@ public class PostController {
     {
         return new PrivateResponseBody(CommonStatusCode.OK, postService.getPosts(search, size));
     }
+    
+    @ApiOperation(value = "팔로우한 게시글 전체 조회")
+    @GetMapping("/posts/temp")
+    public PrivateResponseBody getFollowPosts(
+         @RequestParam(value="size", defaultValue = "5") int size)
+    {
+        return new PrivateResponseBody(CommonStatusCode.OK, postService.getFollowPosts(size));
+    }
 
     @ApiOperation(value = "게시글 상세 조회")
     @GetMapping("/posts/{postId}")
