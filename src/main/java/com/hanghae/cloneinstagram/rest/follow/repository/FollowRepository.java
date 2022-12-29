@@ -14,7 +14,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     //follow 테이블에서 user.getId() 로 조회한 결과, 나오는 followId 는 제외하고 리턴?, 게시글 많은 순으로 조회
     @Query(
          nativeQuery = true,
-         value = "select pu.user_id as userId, pu.user_id, u.username, u.profile_url " +
+         value = "select pu.user_id as userId, u.username, u.profile_url " +
               "from " +
                   "(select count(*) as cnt, user_id " + // 게시글 많이 작성한 유저아이디
                   "from post where post.deleted is not true " + // 삭제안된게시글만
